@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coester — Painel do Hub</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<style>
+/* =====================================================================
+   TOKENS
+   Os valores abaixo são os mesmos de ui/theme.py (Color/Font/Metric) do
+   coleta_ble — copiados, não reinventados — para esta página parecer
+   uma extensão do mesmo aplicativo, não uma ferramenta à parte.
+   Exceções extrapoladas (nomeadas para ficar claro que são derivadas):
+   --danger-soft/--danger-soft-border e --warning-soft/--warning-strong
+   seguem a mesma escala Tailwind que already explica SUCCESS_SOFT em
+   relação a SUCCESS no arquivo original, só que theme.py não precisou
+   de uma variante "soft" para danger/warning porque o Qt usa cor sólida
+   nesses casos; aqui, com mais área de superfície (cartões, badges),
+   a variante clara é necessária.
+   O console de comando cru (aba "Comando cru") é a única área
+   deliberadamente escura da página — um eco do terminal `rich` que o
+   coleta_ble usa no modo CLI, reservado só para aquele painel de
+   depuração, não para a identidade geral.
+   ===================================================================== */
+:root{
+  --bg:              #F3F4F6;
+  --surface:         #FFFFFF;
+  --surface-alt:     #F9FAFB;
+  --surface-disabled:#F3F4F6;
+
+  --border:          #E5E7EB;
+  --border-input:    #D1D5DB;
+  --border-muted:    #9CA3AF;
+
+  --text-strong:     #111827;
+  --text-dark:       #374151;
+  --text-heading:    #4B5563;
+  --text-secondary:  #6B7280;
+  --text-muted:      #9CA3AF;
+
+  --primary:         #2563EB;
+  --primary-hover:   #1D4ED8;
+  --primary-disabled:#93C5FD;
+  --primary-soft:    #EFF6FF;
+  --accent:          #3B82F6;
+
+  --ink:             #1F2937;
+  --ink-hover:       #111827;
+
+  --success:         #10B981;
+  --success-border:  #059669;
+  --success-strong:  #047857;
+  --success-soft:    #ECFDF5;
+  --success-soft-hover:#D1FAE5;
+  --success-label:   #065F46;
+
+  --danger:          #EF4444;
+  --danger-strong:   #B91C1C;
+  --danger-soft:      #FEF2F2;  /* extrapolado, mesma escala de SUCCESS_SOFT */
+  --danger-soft-border:#FECACA;
+
+  --warning:         #F59E0B;
+  --warning-strong:  #B45309;   /* extrapolado, para texto legível sobre --warning-soft */
+  --warning-soft:     #FFFBEB;
+
+  --info-bg:         #F8FAFC;
+  --info-border:     #CBD5E1;
+  --info-text:       #334155;
+
+  --font-ui:   -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace; /* só para MAC/hex */
+
+  /* Logo oficial da Coester, embutido como data URI para a página
+     continuar sendo um arquivo único (sem dependência externa). */
+  --logo: url("data:image/png;base64,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");
+
+  --radius-card:  8px;
+  --radius-input: 4px;
+  --radius-pill:  6px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text-dark);
+  font-family:var(--font-ui);
+  font-size:13px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{ background:var(--primary-soft); color:var(--primary-hover); }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--border-input); border-radius:6px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--text-muted); }
+
+button{ font-family:inherit; font-size:inherit; }
+input,select,textarea{ font-family:inherit; font-size:inherit; }
+
+.mono{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+.dim{ color:var(--text-secondary); }
+.faint{ color:var(--text-muted); }
+.hidden{ display:none !important; }
+
+/* ---------- layout raiz ---------- */
+#app{
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  min-height:560px;
+}
+
+/* ---------- topo ---------- */
+header{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:10px 18px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  flex:0 0 auto;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:700;
+  letter-spacing:.02em;
+  color:var(--text-strong);
+}
+.brand .mark{
+  /* O logo já contém a palavra "COESTER", então não repetimos o texto
+     ao lado — só o descritor do que a página é. Proporção 300x226 do
+     recorte, exibida com altura fixa. */
+  display:block;
+  width:34px; height:26px;
+  background:var(--logo) center / contain no-repeat;
+  flex:0 0 auto;
+}
+.brand small{
+  font-weight:600;
+  color:var(--text-secondary);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-size:10px;
+}
+header .spacer{ flex:1; }
+
+.conn-badge{
+  display:flex; align-items:center; gap:8px;
+  padding:6px 12px;
+  border:1px solid var(--border);
+  border-radius:20px;
+  font-size:12px;
+  color:var(--text-secondary);
+}
+.conn-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--border-muted);
+  box-shadow:0 0 0 3px transparent;
+  transition:background .2s, box-shadow .2s;
+}
+.conn-badge.on .conn-dot{ background:var(--success); box-shadow:0 0 0 3px var(--success-soft); }
+.conn-badge.on{ color:var(--success-label); border-color:var(--success-border); }
+.conn-badge.err .conn-dot{ background:var(--danger); box-shadow:0 0 0 3px var(--danger-soft); }
+
+.btn{
+  appearance:none; cursor:pointer;
+  background:var(--surface);
+  color:var(--text-dark);
+  border:1px solid var(--border-input);
+  border-radius:var(--radius-card);
+  padding:7px 14px;
+  font-weight:700;
+  letter-spacing:.01em;
+  transition:border-color .15s, background .15s, transform .05s;
+}
+.btn:hover{ border-color:var(--accent); background:var(--primary-soft); }
+.btn:active{ transform:translateY(1px); }
+.btn:disabled{ opacity:.5; cursor:not-allowed; background:var(--surface); border-color:var(--border); }
+.btn.primary{ background:var(--primary); border-color:var(--primary); color:#fff; }
+.btn.primary:hover{ background:var(--primary-hover); border-color:var(--primary-hover); }
+.btn.primary:disabled{ background:var(--primary-disabled); border-color:var(--primary-disabled); color:#fff; opacity:1; }
+.btn.danger{ background:transparent; border-color:var(--danger); color:var(--danger); }
+.btn.danger:hover{ border-color:var(--danger-strong); background:var(--danger-soft); }
+.btn.ghost{ background:transparent; }
+.btn.ghost:hover{ background:var(--primary-soft); }
+.btn.small{ padding:4px 10px; font-size:11.5px; border-radius:var(--radius-input); }
+.btn.icon{ padding:6px 8px; line-height:0; }
+
+/* ---------- corpo: sidebar + conteúdo ---------- */
+.body{ flex:1; display:flex; min-height:0; }
+
+.sidebar{
+  width:308px;
+  flex:0 0 auto;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.sidebar-section{
+  border-bottom:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.sidebar-section.grow{ flex:1; }
+.sidebar-section .head{
+  display:flex; align-items:center; gap:8px;
+  padding:10px 14px 8px;
+  flex:0 0 auto;
+}
+.sidebar-section .head h3{
+  margin:0; font-size:11px; font-weight:700;
+  letter-spacing:.09em; text-transform:uppercase;
+  color:var(--text-secondary);
+}
+.sidebar-section .head .spacer{ flex:1; }
+.sidebar-section .list{
+  overflow-y:auto;
+  padding:0 8px 10px;
+}
+.empty-hint{
+  padding:14px 12px; color:var(--text-muted); font-size:12px; line-height:1.5;
+}
+
+/* placeholder de tela cheia quando desconectado */
+.disconnected-screen{
+  flex:1; display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:18px; text-align:center; padding:40px;
+}
+.disconnected-screen .hero-mark{
+  width:184px; height:139px;
+  background:var(--logo) center / contain no-repeat;
+}
+.disconnected-screen h1{ font-size:20px; margin:0; font-weight:700; color:var(--text-strong); }
+.disconnected-screen p{ color:var(--text-secondary); max-width:420px; margin:0; font-size:13px; }
+
+/* ---------- cartões de slot na sidebar ---------- */
+.slot-card{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px;
+  border-radius:var(--radius-input);
+  cursor:pointer;
+  border:1px solid transparent;
+  margin-bottom:2px;
+}
+.slot-card:hover{ background:var(--primary-soft); }
+.slot-card.active{ background:var(--primary-soft); border-color:var(--accent); }
+.slot-card .idx{
+  font-family:var(--font-mono); font-size:10.5px; color:var(--text-muted);
+  width:16px; flex:0 0 auto;
+}
+.state-dot{
+  width:9px; height:9px; border-radius:50%; flex:0 0 auto;
+  background:var(--border-muted);
+}
+.state-dot.s1{ background:var(--warning); animation:pulse 1.6s ease-in-out infinite; }
+.state-dot.s2{ background:var(--accent); }
+.state-dot.s3{ background:var(--success); }
+.state-dot.s4{ background:var(--danger); }
+@keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+.slot-card .info{ flex:1; min-width:0; }
+.slot-card .name{ font-weight:600; color:var(--text-strong); font-size:12.5px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.slot-card .mac{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-muted); }
+.slot-card .state-label{ font-family:var(--font-ui); font-size:10.5px; color:var(--text-secondary); }
+.slot-card .state-label{ font-size:10.5px; color:var(--text-secondary); }
+
+.disc-card{
+  display:flex; align-items:center; gap:8px;
+  padding:8px 10px; border-radius:var(--radius-input);
+  margin-bottom:2px;
+}
+.disc-card:hover{ background:var(--primary-soft); }
+.disc-card .names{ flex:1; min-width:0; }
+.disc-card .name{ font-size:12px; color:var(--text-dark); font-weight:600;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.disc-card .mac{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-muted);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.disc-card .rssi{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-muted); }
+.disc-card .known-tag{
+  font-size:9.5px; color:var(--success-label); border:1px solid var(--success-border);
+  background:var(--success-soft);
+  padding:1px 5px; border-radius:8px; letter-spacing:.03em; white-space:nowrap;
+}
+
+/* rssi bar */
+.rssi-bars{ display:inline-flex; align-items:flex-end; gap:1.5px; height:10px; }
+.rssi-bars i{ width:2.5px; background:var(--border); display:block; border-radius:1px; }
+.rssi-bars i.on{ background:var(--text-secondary); }
+.rssi-bars i:nth-child(1){ height:3px; }
+.rssi-bars i:nth-child(2){ height:5px; }
+.rssi-bars i:nth-child(3){ height:7px; }
+.rssi-bars i:nth-child(4){ height:10px; }
+
+/* formulário de adição manual */
+.manual-add{ padding:8px 14px 12px; display:flex; flex-direction:column; gap:6px; }
+.manual-add .row{ display:flex; gap:6px; }
+.field{
+  background:var(--surface); border:1px solid var(--border-input);
+  border-radius:var(--radius-input); color:var(--text-strong);
+  padding:6px 8px; width:100%; font-size:12px;
+}
+.field:hover{ border-color:var(--accent); }
+.field:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+.field.mac-field{ font-family:var(--font-mono); letter-spacing:.02em; }
+
+.hub-actions{ padding:8px 14px 14px; display:flex; flex-wrap:wrap; gap:6px; }
+
+/* ---------- conteúdo principal ---------- */
+.content{ flex:1; min-width:0; display:flex; flex-direction:column; min-height:0; }
+.slot-header{
+  display:flex; align-items:center; gap:14px;
+  padding:14px 22px; border-bottom:1px solid var(--border);
+  flex:0 0 auto;
+  background:var(--surface);
+}
+.slot-header .titles{ display:flex; flex-direction:column; gap:1px; }
+.slot-header h2{ margin:0; font-size:16px; font-weight:700; color:var(--text-strong); }
+.slot-header .mac-sub{ font-family:var(--font-mono); font-size:11px; color:var(--text-muted); }
+.slot-header .state-pill{
+  font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  padding:3px 9px; border-radius:10px;
+}
+.state-pill.s0{ background:var(--surface-alt); color:var(--text-muted); border:1px solid var(--border); }
+.state-pill.s1{ background:var(--warning-soft); color:var(--warning-strong); }
+.state-pill.s2{ background:var(--primary-soft); color:var(--primary); }
+.state-pill.s3{ background:var(--success-soft); color:var(--success-label); }
+.state-pill.s4{ background:var(--danger-soft); color:var(--danger-strong); }
+.slot-header .spacer{ flex:1; }
+
+.speed-toggle{
+  display:flex; align-items:center; gap:6px;
+  font-size:11.5px; color:var(--text-secondary);
+}
+.speed-toggle .switch{
+  width:34px; height:18px; border-radius:10px; background:var(--border);
+  border:1px solid var(--border-input); position:relative; cursor:pointer;
+}
+.speed-toggle .switch .knob{
+  position:absolute; top:1px; left:1px; width:14px; height:14px; border-radius:50%;
+  background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25);
+  transition:transform .15s, background .15s;
+}
+.speed-toggle .switch.on{ background:var(--primary-soft); border-color:var(--primary); }
+.speed-toggle .switch.on .knob{ transform:translateX(16px); background:var(--primary); }
+
+/* abas */
+.tabs{ display:flex; gap:2px; padding:0 22px; border-bottom:1px solid var(--border);
+  background:var(--surface); flex:0 0 auto; }
+.tab-btn{
+  background:transparent; border:none; color:var(--text-secondary);
+  padding:10px 10px; margin-right:6px; cursor:pointer;
+  font-weight:700; font-size:12.5px; letter-spacing:.02em;
+  border-radius:var(--radius-input) var(--radius-input) 0 0;
+  border-bottom:2px solid transparent;
+}
+.tab-btn:hover{ color:var(--text-strong); background:var(--primary-soft); }
+.tab-btn.active{ color:var(--text-strong); border-bottom-color:var(--primary); }
+
+.tab-panels{ flex:1; overflow-y:auto; min-height:0; }
+.tab-panel{ display:none; padding:20px 22px 40px; }
+.tab-panel.active{ display:block; }
+
+/* ---------- grade de painéis / cartões de dados ---------- */
+.grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:12px; }
+.card{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-card); padding:14px 16px;
+}
+.card h4{
+  margin:0 0 10px; font-size:10.5px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-secondary);
+}
+.readout{ font-family:var(--font-mono); font-size:26px; font-weight:700; line-height:1; color:var(--text-strong); }
+.readout .unit{ font-size:13px; color:var(--text-secondary); font-weight:600; margin-left:4px; }
+.readout-row{ display:flex; justify-content:space-between; align-items:baseline; padding:5px 0;
+  border-bottom:1px solid var(--border); font-size:12.5px; }
+.readout-row:last-child{ border-bottom:none; }
+.readout-row .k{ color:var(--text-secondary); }
+.readout-row .v{ font-family:var(--font-mono); color:var(--text-dark); }
+
+/* mostrador circular de posição — elemento de assinatura */
+.dial-wrap{ display:flex; align-items:center; gap:18px; }
+.dial{ position:relative; width:104px; height:104px; flex:0 0 auto; }
+.dial svg{ width:100%; height:100%; transform:rotate(-90deg); }
+.dial .track{ fill:none; stroke:var(--border); stroke-width:8; }
+.dial .fill{ fill:none; stroke:var(--accent); stroke-width:8; stroke-linecap:round;
+  transition:stroke-dashoffset .35s ease; }
+.dial .value{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  flex-direction:column; transform:none;
+}
+.dial .value .pct{ font-family:var(--font-mono); font-size:22px; font-weight:700; color:var(--text-strong); }
+.dial .value .lbl{ font-size:9px; color:var(--text-muted); letter-spacing:.08em; text-transform:uppercase; }
+
+.bar{ height:8px; border-radius:4px; background:var(--border); overflow:hidden; margin-top:6px; }
+.bar > i{ display:block; height:100%; background:var(--accent); border-radius:4px; transition:width .3s ease; }
+.bar.warn > i{ background:var(--warning); }
+.bar.crit > i{ background:var(--danger); }
+
+/* alarmes */
+.alarm-summary{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.alarm-summary .count{ font-family:var(--font-mono); font-size:22px; font-weight:700; color:var(--text-strong); }
+.alarm-list{ display:flex; flex-direction:column; gap:4px; max-height:220px; overflow-y:auto; }
+.alarm-item{
+  display:flex; justify-content:space-between; gap:10px;
+  padding:6px 10px; background:var(--danger-soft); border:1px solid var(--danger-soft-border);
+  border-radius:var(--radius-input); font-size:12px; color:var(--danger-strong);
+}
+.alarm-item .idx{ color:var(--danger); opacity:.7; font-family:var(--font-mono); font-size:10.5px; }
+.alarm-ok{ color:var(--success-label); font-size:12.5px; display:flex; align-items:center; gap:6px; }
+
+/* comando cru — único painel deliberadamente escuro da página (eco do
+   terminal `rich` que o coleta_ble usa no modo CLI) */
+.quick-cmds{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.seq-toolbar{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+.seq-toolbar .spacer{ flex:1; }
+
+.hex-console{
+  background:var(--ink); border:1px solid var(--border); border-radius:var(--radius-card);
+  padding:12px 14px; font-family:var(--font-mono); font-size:12px; color:#E5E7EB;
+  height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:4px;
+}
+.hex-line{ display:flex; gap:8px; }
+.hex-line .ts{ color:#6B7280; flex:0 0 auto; }
+.hex-line.tx .dir{ color:#FBBF24; font-weight:700; }
+.hex-line.rx .dir{ color:#34D399; font-weight:700; }
+.hex-line.err .dir{ color:#F87171; font-weight:700; }
+.hex-line .bytes{ word-break:break-all; }
+
+/* toast */
+#toasts{ position:fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:8px; z-index:50; }
+.toast{
+  background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--primary);
+  border-radius:var(--radius-card); padding:10px 14px; font-size:12.5px; max-width:340px;
+  color:var(--text-dark);
+  box-shadow:0 8px 24px rgba(17,24,39,.12);
+  animation:toast-in .18s ease;
+}
+.toast.err{ border-left-color:var(--danger); }
+.toast.ok{ border-left-color:var(--success); }
+@keyframes toast-in{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+label.small-label{ display:block; font-size:10.5px; color:var(--text-muted); margin-bottom:3px;
+  letter-spacing:.03em; text-transform:uppercase; }
+
+@media (max-width:860px){
+  .sidebar{ width:230px; }
+  .dial-wrap{ flex-direction:column; align-items:flex-start; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="brand">
+      <span class="mark" role="img" aria-label="Coester"></span>
+      <small>Painel do Hub</small>
+    </div>
+    <div class="spacer"></div>
+    <div class="conn-badge" id="connBadge"><span class="conn-dot"></span><span id="connLabel">Desconectado</span></div>
+    <button class="btn primary" id="btnConnect">Conectar ao Hub</button>
+    <button class="btn ghost hidden" id="btnDisconnect"
+      title="Encerra a sessão do navegador com o Hub. Os atuadores continuam conectados ao Hub normalmente.">
+      Desconectar do Hub
+    </button>
+  </header>
+
+  <div class="body">
+
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar hidden" id="sidebar">
+
+      <div class="sidebar-section">
+        <div class="head">
+          <h3>Atuadores</h3>
+          <span class="spacer"></span>
+          <span class="faint mono" id="slotsSummary" style="font-size:10.5px;"></span>
+        </div>
+        <div class="manual-add">
+          <label class="small-label">Adicionar por endereço MAC</label>
+          <div class="row">
+            <input class="field mac-field" id="manualMac" placeholder="AA:BB:CC:DD:EE:FF" maxlength="17">
+            <select class="field" id="manualType" style="max-width:92px;">
+              <option value="1">random</option>
+              <option value="0">público</option>
+            </select>
+          </div>
+          <button class="btn small" id="btnManualAdd" style="align-self:flex-start;">+ Adicionar</button>
+        </div>
+      </div>
+
+      <div class="sidebar-section" style="flex:0 0 auto; max-height:34%;">
+        <div class="head">
+          <h3>Descobertos por perto</h3>
+          <span class="spacer"></span>
+          <button class="btn small ghost" id="btnClearDiscovery"
+            title="Esquece os atuadores vistos e ainda não adicionados. Eles reaparecem sozinhos no próximo scan que os encontrar.">
+            limpar vistos
+          </button>
+        </div>
+        <div class="list" id="discoveryList">
+          <div class="empty-hint">Nenhum atuador visto ainda. O Hub avisa aqui assim que algo anunciar por perto.</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section grow">
+        <div class="head">
+          <h3>Slots (status ao vivo)</h3>
+          <span class="spacer"></span>
+          <button class="btn small ghost" id="btnRestartScan"
+            title="Reinicia a varredura do Hub agora, sem esperar o próximo ciclo automático.">
+            reiniciar scan
+          </button>
+        </div>
+        <div class="list" id="slotList"></div>
+      </div>
+
+    </div>
+
+    <!-- ================= CONTEÚDO ================= -->
+    <div class="content">
+
+      <div class="disconnected-screen" id="disconnectedScreen">
+        <div class="hero-mark" role="img" aria-label="Coester"></div>
+        <h1>Nenhum Hub conectado</h1>
+        <p>Clique em <strong>Conectar ao Hub</strong>. O navegador vai mostrar uma lista com os
+          Hubs Coester encontrados por perto — escolha o seu para continuar.</p>
+        <p class="hidden" id="envWarning" style="color:var(--danger); font-weight:600; font-size:12.5px;"></p>
+      </div>
+
+      <div id="slotView" class="hidden" style="display:flex; flex-direction:column; min-height:0; flex:1;">
+
+        <div class="slot-header">
+          <div class="titles">
+            <h2 id="slotTitle">—</h2>
+            <span class="mac-sub mono" id="slotMacSub"></span>
+          </div>
+          <span class="state-pill s0" id="slotStatePill">—</span>
+          <div class="spacer"></div>
+          <div class="speed-toggle">
+            <span>Modo</span>
+            <div class="switch" id="speedSwitch"><div class="knob"></div></div>
+            <span id="speedLabel">lento</span>
+          </div>
+          <button class="btn small ghost" id="btnDisconnectSlot"
+            title="Desconecta só este atuador e deixa o Hub reconectar sozinho. Não sai da lista.">
+            Reiniciar link
+          </button>
+          <button class="btn small danger" id="btnRemoveSlot"
+            title="Remove da lista de autorizados. O Hub para de tentar reconectar — para voltar, adicione de novo.">
+            Remover da lista
+          </button>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="diag">Diagnóstico</button>
+          <button class="tab-btn" data-tab="cmd">Comando cru</button>
+        </div>
+
+        <div class="tab-panels">
+
+          <!-- DIAGNÓSTICO -->
+          <div class="tab-panel active" data-tab="diag">
+            <div class="seq-toolbar">
+              <button class="btn small primary" id="btnDiagOnce">Ler agora</button>
+              <button class="btn small" id="btnDiagPoll">■ Pausar leitura automática</button>
+              <select class="field" id="diagInterval" style="width:auto;">
+                <option value="2000">a cada 2 s</option>
+                <option value="5000" selected>a cada 5 s</option>
+                <option value="10000">a cada 10 s</option>
+                <option value="30000">a cada 30 s</option>
+              </select>
+              <div class="spacer"></div>
+              <span class="faint mono" id="diagLastRead">nunca lido</span>
+            </div>
+            <p class="faint" style="margin:-6px 0 14px; font-size:11.5px;">
+              A leitura começa sozinha assim que o atuador fica <strong>pronto</strong> — não precisa clicar em nada.
+            </p>
+
+            <div class="grid">
+              <div class="card">
+                <h4>Posição</h4>
+                <div class="dial-wrap">
+                  <div class="dial">
+                    <svg viewBox="0 0 104 104">
+                      <circle class="track" cx="52" cy="52" r="44"/>
+                      <circle class="fill" id="posDialFill" cx="52" cy="52" r="44"
+                        stroke-dasharray="276.5" stroke-dashoffset="276.5"/>
+                    </svg>
+                    <div class="value"><span class="pct mono" id="posPct">—</span><span class="lbl">aberta</span></div>
+                  </div>
+                  <div>
+                    <div class="readout-row"><span class="k">Valor AD</span><span class="v" id="posAd">—</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h4>Torque</h4>
+                <div class="readout"><span id="torNm">—</span><span class="unit">Nm</span></div>
+                <div class="bar" id="torBar"><i style="width:0%"></i></div>
+                <div class="readout-row"><span class="k">Máximo</span><span class="v" id="torMax">—</span></div>
+                <div class="readout-row"><span class="k">Valor AD</span><span class="v" id="torAd">—</span></div>
+              </div>
+
+              <div class="card">
+                <h4>Alarmes</h4>
+                <div class="alarm-summary">
+                  <span class="count mono" id="alarmCount">—</span>
+                  <span class="faint">de 118 monitorados</span>
+                </div>
+                <div id="alarmBody"><span class="faint">Sem leitura ainda.</span></div>
+              </div>
+
+              <div class="card">
+                <h4>Dados gerais</h4>
+                <div class="readout-row"><span class="k">Temp. mín / máx</span><span class="v" id="dgTemp">—</span></div>
+                <div class="readout-row"><span class="k">Horímetro total</span><span class="v" id="dgHorTotal">—</span></div>
+                <div class="readout-row"><span class="k">Horímetro operando</span><span class="v" id="dgHorOper">—</span></div>
+                <div class="readout-row"><span class="k">Máx. partidas/h</span><span class="v" id="dgPartidas">—</span></div>
+                <div class="readout-row"><span class="k">Abre / fecha</span><span class="v" id="dgAbreFecha">—</span></div>
+                <div class="readout-row"><span class="k">Índice curva/torque</span><span class="v" id="dgIdxCurva">—</span></div>
+                <div class="readout-row"><span class="k">Índice evento</span><span class="v" id="dgIdxEvento">—</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMANDO CRU -->
+          <div class="tab-panel" data-tab="cmd">
+            <div class="quick-cmds" id="quickCmds"></div>
+            <div class="seq-toolbar">
+              <input class="field mono" id="hexCmdInput" placeholder="01 00 03 0A 80 40 80 00" style="max-width:420px;">
+              <button class="btn small primary" id="btnHexSend">Enviar</button>
+              <div class="spacer"></div>
+              <button class="btn small ghost" id="btnHexClear">Limpar log</button>
+            </div>
+            <div class="hex-console" id="hexConsole"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   PROTOCOLO — UUIDs do Hub (Kit A)
+   Espelha PROTOCOLO_INTERFACE.md e ble/protocol.py do coleta_ble.
+   ===================================================================== */
+const SVC = '00001523-1212-efde-1523-785feabcd123';
+const CHR = {
+  led:        '00001525-1212-efde-1523-785feabcd123',
+  rawData:    '00001527-1212-efde-1523-785feabcd123', // notify  [slot][frame proCo]
+  command:    '00001528-1212-efde-1523-785feabcd123', // write   [slot][comando]
+  manage:     '00001529-1212-efde-1523-785feabcd123', // write   [cmd][addr_type][MAC x6]
+  status:     '0000152a-1212-efde-1523-785feabcd123', // read+notify
+  discovery:  '0000152b-1212-efde-1523-785feabcd123', // read+notify
+  hubCtrl:    '0000152c-1212-efde-1523-785feabcd123', // write   [cmd][args]
+};
+
+const MAX_SLOTS = 19;
+// O nome (TAG) é a mesma info que o coleta_ble mostra a partir de
+// device.name — o Hub agora captura o Local Name do advertisement e
+// devolve como parte fixa do registro (ver PROTOCOLO_INTERFACE.md).
+const NAME_LEN = 32;
+const REC_LEN = 9 + NAME_LEN; // 41 bytes por registro (status e descoberta)
+const HEADER_SIZE = 8; // bytes de cabeçalho antes do payload, dentro do "frame" (= notify sem o byte de slot)
+
+const HUB_CTRL = {
+  CLEAR_DISCOVERY: 0x01,
+  RESTART_SCAN:    0x02,
+  DISCONNECT_SLOT: 0x03,
+  SET_SPEED:       0x04,
+};
+
+const ACTUATOR_STATE = { 0:'vazio', 1:'aguardando', 2:'conectado', 3:'pronto', 4:'erro' };
+
+/* ---- Comandos do protocolo proCo — idênticos a ble/protocol.py ---- */
+const CMD_READ                = [0x01,0x00,0x03,0x40,0x0A,0x00,0x80,0x00];
+const CMD_READ_POS_TOR        = [0x01,0x00,0x03,0x0A,0x80,0x40,0x80,0x00];
+const CMD_READ_ALARM          = [0x01,0x00,0x03,0x76,0x80,0x48,0x80,0x00];
+const CMD_READ_DADOS_GERAIS   = [0x01,0x00,0x03,0x22,0x80,0x38,0x80,0x00];
+const CMD_READ_FW_VERSION     = [0x01,0x00,0x03,0x0A,0x00,0x38,0x80,0x00];
+const CMD_START_LAST_CURVE    = [0x01,0x00,0x04,0x06,0x02,0x00,0x80,0x00,0x80,0x04,0xFF,0xFF,0xFF,0xFF];
+const CMD_NEXT_CURVE          = [0x01,0x00,0x04,0x02,0x02,0x00,0x80,0x00,0x81,0x04];
+const CMD_START_LAST_EVENT    = [0x01,0x00,0x04,0x06,0x02,0x00,0x80,0x00,0x00,0x04,0xFF,0xFF,0xFF,0xFF];
+const CMD_NEXT_EVENT          = [0x01,0x00,0x04,0x02,0x02,0x00,0x80,0x00,0x01,0x04];
+
+const MIN_FW = { 1:[1,19,21], 2:[2,11,12], 3:[3,3,4], 4:[4,3,4] };
+
+const QUICK_COMMANDS = [
+  { label: 'Posição/Torque',   cmd: CMD_READ_POS_TOR },
+  { label: 'Alarmes',          cmd: CMD_READ_ALARM },
+  { label: 'Dados gerais',     cmd: CMD_READ_DADOS_GERAIS },
+  { label: 'Versão firmware',  cmd: CMD_READ_FW_VERSION },
+  { label: 'Ler buffer (READ)', cmd: CMD_READ },
+];
+
+const ALARM_NAMES = [ // indice 1..118, alinhado 1:1 com ressources/bytes_alarmes.json
+  "Falha Barramento",
+  "Falha Barramento RETAIN",
+  "Comunicacao FSA",
+  "Comunicacao FSA RETAIN",
+  "Comunicacao Posicao",
+  "Comunicacao Posicao RETAIN",
+  "Comunicacao Torque",
+  "Comunicacao Torque RETAIN",
+  "Comunicacao EEPROM",
+  "Comunicacao EEPROM RETAIN",
+  "Falha Configuracao FSA",
+  "Falha Configuracao FSA RETAIN",
+  "Sem Programa",
+  "Sem Programa RETAIN",
+  "Incompatibilidade Sensor Torque",
+  "Incompatibilidade Sensor Torque RETAIN",
+  "Sobreaquecimento",
+  "Sobreaquecimento RETAIN",
+  "Falta de Fase",
+  "Falta de Fase RETAIN",
+  "Falha Sensor de Fase",
+  "Falha Sensor de Fase RETAIN",
+  "Torque Abertura",
+  "Torque Abertura RETAIN",
+  "Torque Fechamento",
+  "Torque Fechamento RETAIN",
+  "Valvula Travada",
+  "Valvula Travada RETAIN",
+  "ESD Externo",
+  "ESD Externo RETAIN",
+  "Parada Local",
+  "Parada Local RETAIN",
+  "Modo Nao Remoto",
+  "Modo Nao Remoto RETAIN",
+  "Operacao Incompleta",
+  "Operacao Incompleta RETAIN",
+  "Falha Motor Energizado",
+  "Falha Motor Energizado RETAIN",
+  "Motor Energizado Fim Curso",
+  "Motor Energizado Fim Curso RETAIN",
+  "Motor Energizado Parada",
+  "Motor Energizado Parada RETAIN",
+  "Tensao Alta",
+  "Tensao Alta RETAIN",
+  "Tensao Baixa",
+  "Tensao Baixa RETAIN",
+  "Fim Curso Absoluto",
+  "Fim Curso Absoluto RETAIN",
+  "Fim Curso Programado Abertura",
+  "Fim Curso Programado Abertura RETAIN",
+  "Fim Curso Programado Fechamento",
+  "Fim Curso Programado Fechamento RETAIN",
+  "Local Inibido",
+  "Local Inibido RETAIN",
+  "Tensao Baixa Bateria",
+  "Tensao Baixa Bateria RETAIN",
+  "Falha Acionamento Inversor",
+  "Falha Acionamento Inversor RETAIN",
+  "Tempo Operacao Excessivo",
+  "Tempo Operacao Excessivo RETAIN",
+  "Numero Partidas Maximo",
+  "Numero Partidas Maximo RETAIN",
+  "Offline",
+  "Offline RETAIN",
+  "Operacao Manual",
+  "Operacao Manual RETAIN",
+  "Falha Comando",
+  "Falha Comando RETAIN",
+  "Comunicacao RTC",
+  "Comunicacao RTC RETAIN",
+  "VCC Baixa",
+  "VCC Baixa RETAIN",
+  "VBAT Baixa",
+  "VBAT Baixa RETAIN",
+  "RTC Nao Inicializado",
+  "RTC Nao Inicializado RETAIN",
+  "Contador Absoluto",
+  "Contador Absoluto RETAIN",
+  "Comunicacao IOA",
+  "Comunicacao IOA RETAIN",
+  "Configuracao IOA",
+  "Configuracao IOA RETAIN",
+  "Lacre Aberto 1",
+  "Lacre Aberto 1 RETAIN",
+  "Lacre Aberto 2",
+  "Lacre Aberto 2 RETAIN",
+  "Comunicacao IOD",
+  "Comunicacao IOD RETAIN",
+  "Configuracao IOD",
+  "Configuracao IOD RETAIN",
+  "Comunicacao Rede",
+  "Comunicacao Rede RETAIN",
+  "Configuracao Rede",
+  "Configuracao Rede RETAIN",
+  "PST Executado",
+  "PST Executado RETAIN",
+  "PST Falhou",
+  "PST Falhou RETAIN",
+  "Falha Sensor Posicao ABS HW",
+  "Falha Sensor Posicao ABS HW RETAIN",
+  "Falha Sensor Posicao ABS MAG",
+  "Falha Sensor Posicao ABS MAG RETAIN",
+  "Falha Sensor Posicao ABS REF",
+  "Falha Sensor Posicao ABS REF RETAIN",
+  "Falha Sensor Posicao ABS MEC",
+  "Falha Sensor Posicao ABS MEC RETAIN",
+  "Falha Sensor Posicao ABS INO",
+  "Falha Sensor Posicao ABS INO RETAIN",
+  "Falha Sensor Posicao ABS SH1",
+  "Falha Sensor Posicao ABS SH1 RETAIN",
+  "Falha Sensor Posicao ABS SH2",
+  "Falha Sensor Posicao ABS SH2 RETAIN",
+  "Falha Sensor Posicao ABS SH3",
+  "Falha Sensor Posicao ABS SH3 RETAIN",
+  "Falha Sensor Posicao ABS SH4",
+  "Falha Sensor Posicao ABS SH4 RETAIN",
+  "Falha Sensor Posicao ABS SH5",
+  "Falha Sensor Posicao ABS SH5 RETAIN"
+];
+
+/* =====================================================================
+   UTILITÁRIOS DE BYTES / ENDEREÇO
+   ===================================================================== */
+function toHex(bytes, sep=' '){
+  return Array.from(bytes).map(b => b.toString(16).padStart(2,'0').toUpperCase()).join(sep);
+}
+function parseHexString(str){
+  const clean = str.trim().replace(/0x/gi,'').replace(/[,;]/g,' ').split(/\s+/).filter(Boolean);
+  const bytes = clean.map(h => {
+    if(!/^[0-9a-fA-F]{1,2}$/.test(h)) throw new Error(`Token hex inválido: "${h}"`);
+    return parseInt(h,16);
+  });
+  return new Uint8Array(bytes);
+}
+// MAC vem do stack em ordem invertida em relação ao AA:BB:CC:DD:EE:FF humano.
+function macToBytes(mac){
+  const parts = mac.trim().split(':');
+  if(parts.length !== 6 || parts.some(p => !/^[0-9a-fA-F]{1,2}$/.test(p))){
+    throw new Error('Endereço MAC inválido. Use o formato AA:BB:CC:DD:EE:FF.');
+  }
+  return parts.map(p => parseInt(p,16)).reverse();
+}
+function bytesToMac(bytes){
+  return Array.from(bytes).reverse().map(b => b.toString(16).padStart(2,'0').toUpperCase()).join(':');
+}
+function int8(byte){ return byte < 128 ? byte : byte - 256; }
+// Campo de tamanho fixo (não C-string): decodifica até o primeiro 0x00,
+// ou o campo inteiro se não houver nenhum (nome exatamente do tamanho do campo).
+function decodeNameField(bytes){
+  let end = bytes.indexOf(0);
+  if(end === -1) end = bytes.length;
+  const txt = new TextDecoder('utf-8').decode(bytes.slice(0, end)).trim();
+  return txt;
+}
+
+function fmtElapsed(seconds){
+  const h = Math.floor(seconds/3600);
+  const m = Math.floor((seconds%3600)/60);
+  const s = Math.floor(seconds%60);
+  return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+function fmtDataHoraCurva(r){
+  return `20${pad2(r.ano)}-${pad2(r.mes)}-${pad2(r.dia)} ${pad2(r.hora)}:${pad2(r.minu)}:${pad2(r.segun)}`;
+}
+function fmtDataHoraEvento(r){
+  return `20${pad2(r.ano)}-${pad2(r.mes)}-${pad2(r.dia)} ${pad2(r.hora)}:${pad2(r.minu)}:${pad2(r.segun)}.${String(r.mil_seg).padStart(3,'0')}`;
+}
+
+class ProtocolError extends Error {}
+
+
+/* =====================================================================
+   PARSERS — espelham 1:1 os módulos parsers/*.py do coleta_ble.
+   Todo acesso multi-byte é little-endian, igual ao struct.unpack("<...").
+   ===================================================================== */
+
+function parsePosicao(payload){ // parsers/... parse_posicao equivalente (em reader.py)
+  if(payload.length < 4) throw new ProtocolError('Payload insuficiente para posição');
+  const dv = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+  const adPos = dv.getUint16(0, true);
+  const percentRaw = dv.getUint16(2, true);
+  return { ad: adPos, percentual: percentRaw/10.0 };
+}
+function parseTorque(payload){
+  if(payload.length < 10) throw new ProtocolError('Payload insuficiente para torque');
+  const dv = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+  return {
+    ad: dv.getUint16(4, true),
+    nm: dv.getUint16(6, true),
+    nmMax: dv.getUint16(8, true),
+  };
+}
+
+function parseCurve(payload){ // parsers/curves.py
+  if(payload.length < 64) throw new ProtocolError(`Curva inválida: ${payload.length} bytes (mínimo 64)`);
+  const dv = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+  let o = 0;
+  const index = dv.getUint32(o, true); o += 4;
+  const temp_mov = dv.getUint16(o, true); o += 2;
+  const direc = payload[o++]; const motiv_ini = payload[o++]; const motiv_par = payload[o++];
+  const ano = payload[o++], mes = payload[o++], dia = payload[o++];
+  const hora = payload[o++], minu = payload[o++], segun = payload[o++];
+  o += 1; // padding
+  const torque = [];
+  for(let i=0;i<21;i++){ torque.push(dv.getUint16(o, true)); o += 2; }
+  const reserv = payload.slice(o, o+6);
+  return { index, temp_mov, direc, motiv_ini, motiv_par, ano, mes, dia, hora, minu, segun,
+    torque, reserv: toHex(reserv,'') };
+}
+
+function parseEvent(payload){ // parsers/events.py
+  if(payload.length < 14) throw new ProtocolError(`Evento inválido: ${payload.length} bytes (mínimo 14)`);
+  const dv = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+  let o = 0;
+  const index = dv.getUint32(o, true); o += 4;
+  const event = dv.getUint16(o, true); o += 2;
+  const ano = payload[o++], mes = payload[o++], dia = payload[o++];
+  const hora = payload[o++], minu = payload[o++], segun = payload[o++];
+  const mil_seg = dv.getUint16(o, true);
+  return { index, event, ano, mes, dia, hora, minu, segun, mil_seg };
+}
+
+const ALARM_PAYLOAD_SIZE = 118;
+function parseAlarm(payload){ // parsers/alarmes.py
+  if(payload.length < ALARM_PAYLOAD_SIZE)
+    throw new ProtocolError(`Payload de alarmes insuficiente: ${payload.length} bytes (mínimo ${ALARM_PAYLOAD_SIZE})`);
+  const slice = payload.slice(0, ALARM_PAYLOAD_SIZE);
+  const alarmes = [];
+  for(let indice=1; indice<=ALARM_PAYLOAD_SIZE; indice++){
+    const valor = slice[indice-1];
+    alarmes.push({ indice, offset:indice-1, nome: ALARM_NAMES[indice-1] || `Byte ${indice}`, valor, ativo: valor !== 0 });
+  }
+  const ativos = alarmes.filter(a => a.ativo);
+  return { total: alarmes.length, rawHex: toHex(slice), alarmes, ativos };
+}
+
+const DADOS_GERAIS_PAYLOAD_SIZE = 34;
+function parseDadosGerais(payload){ // parsers/dados_gerais.py — formato "<hhIHIHHIIII"
+  if(payload.length < DADOS_GERAIS_PAYLOAD_SIZE)
+    throw new ProtocolError(`Payload de dados gerais insuficiente: ${payload.length} bytes (mínimo ${DADOS_GERAIS_PAYLOAD_SIZE})`);
+  const dv = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+  let o = 0;
+  const temp_max = dv.getInt16(o, true)/2.0; o += 2;
+  const temp_min = dv.getInt16(o, true)/2.0; o += 2;
+  const hora_total = dv.getUint32(o, true); o += 4;
+  const minu_total = dv.getUint16(o, true); o += 2;
+  const hora_operan = dv.getUint32(o, true); o += 4;
+  const minu_operan = dv.getUint16(o, true); o += 2;
+  const max_partid_hora = dv.getUint16(o, true); o += 2;
+  const cont_abre = dv.getUint32(o, true); o += 4;
+  const cont_fecha = dv.getUint32(o, true); o += 4;
+  const index_reg_curv_torq = dv.getUint32(o, true); o += 4;
+  const absol_index_reg_event = dv.getUint32(o, true);
+  return { temp_max, temp_min, hora_total, minu_total, hora_operan, minu_operan,
+    max_partid_hora, cont_abre, cont_fecha, index_reg_curv_torq, absol_index_reg_event };
+}
+
+function parseFwVersion(payload){ // parsers/firmware.py
+  let end = payload.indexOf(0);
+  if(end === -1) end = payload.length;
+  const txt = new TextDecoder('ascii').decode(payload.slice(0, end)).trim();
+  const m = txt.match(/^V(\d+)\.(\d+)\.(\d+)/);
+  if(!m) throw new ProtocolError(`Formato de versão inválido: "${txt}"`);
+  return { txt, versao: [parseInt(m[1]), parseInt(m[2]), parseInt(m[3])] };
+}
+function firmwareSuportado(versao){
+  const min = MIN_FW[versao[0]];
+  if(!min) return false;
+  for(let i=0;i<3;i++){
+    if(versao[i] > min[i]) return true;
+    if(versao[i] < min[i]) return false;
+  }
+  return true; // igual
+}
+
+
+/* =====================================================================
+   ESTADO GLOBAL
+   ===================================================================== */
+const state = {
+  device: null, server: null, chars: {},
+  slots: new Map(),      // idx -> { idx, state, addrType, mac, speed, lock, pending, diag:{...}, curvaSessao:[], eventoSessao:[], diagTimer, curvaAbort, eventoAbort }
+  discovered: new Map(), // mac -> { addrType, mac, rssi, known }
+  selectedSlot: null,
+};
+
+function emptySlot(idx){
+  return {
+    idx, state: 0, addrType: 1, mac: '00:00:00:00:00:00', name: '',
+    speed: 'slow', lock: Promise.resolve(), pending: null,
+    diag: null, diagTimer: null, diagPolling: false,
+    curvaSessao: [], eventoSessao: [],
+    curvaAbort: null, eventoAbort: null,
+  };
+}
+function getSlotState(idx){
+  if(!state.slots.has(idx)) state.slots.set(idx, emptySlot(idx));
+  return state.slots.get(idx);
+}
+
+/* =====================================================================
+   ESCRITA GATT
+   Todas as characteristics de escrita do Hub foram declaradas com a
+   flag BT_GATT_CHRC_WRITE (write request), não WRITE_WITHOUT_RESPONSE
+   — por isso usamos writeValueWithResponse(), com fallback para o
+   writeValue() legado em navegadores mais antigos.
+   ===================================================================== */
+async function writeChar(char, bytesArray){
+  const buf = new Uint8Array(bytesArray);
+  if(typeof char.writeValueWithResponse === 'function'){
+    await char.writeValueWithResponse(buf);
+  } else {
+    await char.writeValue(buf);
+  }
+}
+async function writeSlotCommand(slot, cmdArray){
+  await writeChar(state.chars.command, [slot, ...cmdArray]);
+}
+
+/* =====================================================================
+   NOTIFICAÇÕES
+   ===================================================================== */
+function onRawDataNotify(evt){
+  const dv = evt.target.value;
+  const raw = new Uint8Array(dv.buffer, dv.byteOffset, dv.byteLength);
+  const slot = raw[0];
+  const frame = raw.slice(1); // equivalente ao "b" recebido pelo on_notify do coleta_ble
+
+  // Mesmo filtro do coleta_ble: pelo menos 3 bytes e frame[2] em (0x05, 0x06).
+  if(frame.length >= 3 && (frame[2] === 0x05 || frame[2] === 0x06)){
+    logHex(slot, 'rx', frame);
+    const st = state.slots.get(slot);
+    if(st && st.pending){ const p = st.pending; st.pending = null; p.resolve(frame); }
+  } else {
+    logHex(slot, 'err', frame);
+  }
+}
+
+function parseStatusRecord(bytes){
+  return {
+    slot: bytes[0], state: bytes[1], addrType: bytes[2],
+    mac: bytesToMac(bytes.slice(3,9)),
+    name: decodeNameField(bytes.slice(9, REC_LEN)),
+  };
+}
+function parseDiscoveryRecord(bytes){
+  return {
+    addrType: bytes[0], mac: bytesToMac(bytes.slice(1,7)),
+    rssi: int8(bytes[7]), known: !!(bytes[8] & 0x01),
+    name: decodeNameField(bytes.slice(9, REC_LEN)),
+  };
+}
+
+function applyStatusRecord(rec){
+  const st = getSlotState(rec.slot);
+  const wasSelected = state.selectedSlot === rec.slot;
+  const ficouPronto = st.state !== 3 && rec.state === 3;
+  st.state = rec.state; st.addrType = rec.addrType; st.mac = rec.mac; st.name = rec.name;
+  renderSlotList();
+  if(wasSelected){
+    renderSlotHeader();
+    // Leitura automática: assim que o slot selecionado fica PRONTO, a
+    // página já começa a ler sozinha — sem exigir clique em "iniciar".
+    if(ficouPronto && !st.diagPolling) startDiagPolling(rec.slot, parseInt($('diagInterval').value, 10));
+    if(rec.state !== 3) stopDiagPolling(rec.slot);
+  }
+}
+function applyDiscoveryRecord(rec){
+  if(rec.mac === '00:00:00:00:00:00') return;
+  state.discovered.set(rec.mac, rec);
+  renderDiscoveryList();
+}
+
+function onStatusNotify(evt){
+  const dv = evt.target.value;
+  const bytes = new Uint8Array(dv.buffer, dv.byteOffset, dv.byteLength);
+  if(bytes.length < REC_LEN) return;
+  applyStatusRecord(parseStatusRecord(bytes));
+}
+function onDiscoveryNotify(evt){
+  const dv = evt.target.value;
+  const bytes = new Uint8Array(dv.buffer, dv.byteOffset, dv.byteLength);
+  if(bytes.length < REC_LEN) return;
+  applyDiscoveryRecord(parseDiscoveryRecord(bytes));
+}
+
+async function refreshStatusAll(){
+  const dv = await state.chars.status.readValue();
+  const bytes = new Uint8Array(dv.buffer, dv.byteOffset, dv.byteLength);
+  for(let o=0; o+REC_LEN<=bytes.length; o+=REC_LEN){
+    applyStatusRecord(parseStatusRecord(bytes.slice(o,o+REC_LEN)));
+  }
+}
+async function refreshDiscoveryAll(){
+  const dv = await state.chars.discovery.readValue();
+  const bytes = new Uint8Array(dv.buffer, dv.byteOffset, dv.byteLength);
+  state.discovered.clear();
+  for(let o=0; o+REC_LEN<=bytes.length; o+=REC_LEN){
+    const rec = parseDiscoveryRecord(bytes.slice(o,o+REC_LEN));
+    if(rec.mac !== '00:00:00:00:00:00') state.discovered.set(rec.mac, rec);
+  }
+  renderDiscoveryList();
+}
+
+/* =====================================================================
+   COMANDOS DE GESTÃO (Actuator Manage / Hub Control)
+   ===================================================================== */
+async function addActuator(mac, addrType){
+  await writeChar(state.chars.manage, [0x01, addrType, ...macToBytes(mac)]);
+}
+async function removeActuator(mac, addrType){
+  await writeChar(state.chars.manage, [0x00, addrType, ...macToBytes(mac)]);
+}
+async function hubClearDiscovery(){ await writeChar(state.chars.hubCtrl, [HUB_CTRL.CLEAR_DISCOVERY]); }
+async function hubRestartScan(){ await writeChar(state.chars.hubCtrl, [HUB_CTRL.RESTART_SCAN]); }
+async function hubDisconnectSlot(slot){ await writeChar(state.chars.hubCtrl, [HUB_CTRL.DISCONNECT_SLOT, slot]); }
+async function hubSetSpeed(slot, fast){ await writeChar(state.chars.hubCtrl, [HUB_CTRL.SET_SPEED, slot, fast ? 1 : 0]); }
+
+/* =====================================================================
+   CAMADA DE PROTOCOLO PROCO — espelha ble/client.py e ble/reader.py
+   Serializado por slot: um comando em voo por vez (ver PROTOCOLO_INTERFACE.md,
+   "regra crítica: um comando em voo por slot" — o protocolo não tem ID de
+   correlação, então respostas de comandos concorrentes se intercalam e
+   corrompem os dois.
+   ===================================================================== */
+function withSlotLock(slot, fn){
+  const st = getSlotState(slot);
+  const run = st.lock.then(fn, fn);
+  st.lock = run.then(()=>{}, ()=>{});
+  return run;
+}
+
+function sendCommandAndWaitFrame(slot, cmdArray, timeoutMs){
+  return withSlotLock(slot, () => new Promise(async (resolve, reject) => {
+    const st = getSlotState(slot);
+    let settled = false;
+    const timer = setTimeout(() => {
+      if(settled) return;
+      settled = true;
+      st.pending = null;
+      reject(new ProtocolError('Tempo de resposta excedido. Verifique conexão BLE ou proximidade do atuador.'));
+    }, timeoutMs);
+
+    st.pending = {
+      resolve: (frame) => { if(settled) return; settled = true; clearTimeout(timer); resolve(frame); },
+      reject:  (e)     => { if(settled) return; settled = true; clearTimeout(timer); reject(e); },
+    };
+
+    try{
+      logHex(slot, 'tx', cmdArray);
+      await writeSlotCommand(slot, cmdArray);
+    }catch(e){
+      if(!settled){ settled = true; clearTimeout(timer); st.pending = null; reject(e); }
+    }
+  }));
+}
+
+// ble/client.py :: enviar_comando — envia e exige ACK (frame[2] === 0x05)
+async function enviarComando(slot, cmdArray, timeoutMs=10000){
+  const frame = await sendCommandAndWaitFrame(slot, cmdArray, timeoutMs);
+  if(frame.length < 3) throw new ProtocolError('Resposta BLE inválida — muito curta.');
+  if(frame[2] !== 0x05) throw new ProtocolError(`ACK inválido recebido (0x${frame[2].toString(16).padStart(2,'0')}).`);
+  return frame;
+}
+// ble/client.py :: ler_payload — sempre manda CMD_READ, devolve o payload sem cabeçalho
+async function lerPayload(slot, timeoutMs=15000){
+  const frame = await sendCommandAndWaitFrame(slot, CMD_READ, timeoutMs);
+  if(frame.length < HEADER_SIZE) throw new ProtocolError('Resposta BLE incompleta.');
+  return frame.slice(HEADER_SIZE);
+}
+// ble/reader.py :: _ler_read_payload — leitura direta de tamanho fixo conhecido
+async function lerReadPayload(slot, cmdArray, tamanhoPayload, nome, timeoutMs=16000){
+  const frame = await sendCommandAndWaitFrame(slot, cmdArray, timeoutMs);
+  const minLen = HEADER_SIZE + tamanhoPayload;
+  if(frame.length < minLen)
+    throw new ProtocolError(`Resposta de ${nome} incompleta: ${frame.length} bytes recebidos, mínimo ${minLen}`);
+  return frame.slice(HEADER_SIZE, minLen);
+}
+
+async function lerFirmware(slot){
+  const frame = await sendCommandAndWaitFrame(slot, CMD_READ_FW_VERSION, 10000);
+  if(frame.length < HEADER_SIZE) throw new ProtocolError('Resposta de firmware inválida.');
+  return parseFwVersion(frame.slice(HEADER_SIZE));
+}
+async function lerPosTor(slot){
+  const payload = await lerReadPayload(slot, CMD_READ_POS_TOR, 10, 'posição/torque', 16000);
+  return { pos: parsePosicao(payload), tor: parseTorque(payload) };
+}
+async function lerAlarmes(slot){
+  const payload = await lerReadPayload(slot, CMD_READ_ALARM, ALARM_PAYLOAD_SIZE, 'alarmes', 16000);
+  return parseAlarm(payload);
+}
+async function lerDadosGerais(slot){
+  const payload = await lerReadPayload(slot, CMD_READ_DADOS_GERAIS, DADOS_GERAIS_PAYLOAD_SIZE, 'dados gerais', 16000);
+  return parseDadosGerais(payload);
+}
+
+/* ---- leitura sequencial (curvas / eventos) — espelha reader.py::ler_registros ---- */
+const TIPO_CONFIG = {
+  curvas:  { cmdStart: CMD_START_LAST_CURVE, cmdNext: CMD_NEXT_CURVE, parser: parseCurve,  label: 'Curvas' },
+  eventos: { cmdStart: CMD_START_LAST_EVENT, cmdNext: CMD_NEXT_EVENT, parser: parseEvent,  label: 'Eventos' },
+};
+
+async function lerUltimoRegistro(slot, tipo){
+  const cfg = TIPO_CONFIG[tipo];
+  await enviarComando(slot, cfg.cmdStart);   // START_LAST — só ACK
+  await lerPayload(slot);                    // 1ª leitura pós-START é descartada (ver PROTOCOLO_INTERFACE.md)
+  const payload = await lerPayload(slot);    // 2ª leitura traz o registro de fato
+  return cfg.parser(payload);
+}
+async function lerProximoRegistro(slot, tipo){
+  const cfg = TIPO_CONFIG[tipo];
+  await enviarComando(slot, cfg.cmdNext);
+  const payload = await lerPayload(slot);
+  return cfg.parser(payload);
+}
+
+async function baixarSequencia(slot, tipo, { onProgress, pararNoIndice=null, signal } = {}){
+  const registros = [];
+  const primeiro = await lerUltimoRegistro(slot, tipo);
+  if(pararNoIndice != null && primeiro.index <= pararNoIndice){
+    onProgress && onProgress(primeiro, 0, true);
+    return registros;
+  }
+  const indicesLidos = new Set([primeiro.index]);
+  registros.push(primeiro);
+  onProgress && onProgress(primeiro, 1, false);
+
+  while(true){
+    if(signal && signal.aborted) break;
+    const proximo = await lerProximoRegistro(slot, tipo);
+    if(indicesLidos.has(proximo.index)) break;               // fim do buffer circular
+    if(pararNoIndice != null && proximo.index <= pararNoIndice) break; // leitura incremental
+    indicesLidos.add(proximo.index);
+    registros.push(proximo);
+    onProgress && onProgress(proximo, registros.length, false);
+  }
+  onProgress && onProgress(registros[registros.length-1] || null, registros.length, true);
+  return registros;
+}
+
+
+/* =====================================================================
+   RENDERIZAÇÃO
+   ===================================================================== */
+const $ = (id) => document.getElementById(id);
+
+function toast(msg, kind='info'){
+  const el = document.createElement('div');
+  el.className = 'toast' + (kind==='err' ? ' err' : kind==='ok' ? ' ok' : '');
+  el.textContent = msg;
+  $('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 5200);
+}
+
+function setConnectedUI(connected, name){
+  const badge = $('connBadge');
+  badge.classList.toggle('on', connected);
+  $('connLabel').textContent = connected ? (name || 'Conectado') : 'Desconectado';
+  $('btnConnect').classList.toggle('hidden', connected);
+  $('btnDisconnect').classList.toggle('hidden', !connected);
+  $('sidebar').classList.toggle('hidden', !connected);
+  $('disconnectedScreen').classList.toggle('hidden', connected);
+  $('slotView').classList.toggle('hidden', !connected || state.selectedSlot === null);
+  if(!connected){
+    state.selectedSlot = null;
+    state.slots.forEach(st => stopDiagPolling(st.idx));
+  }
+}
+
+function renderSlotList(){
+  const wrap = $('slotList');
+  wrap.innerHTML = '';
+  let ativos = 0;
+  const idxs = Array.from({length: MAX_SLOTS}, (_,i) => i);
+  for(const idx of idxs){
+    const st = state.slots.get(idx) || emptySlot(idx);
+    if(st.state !== 0) ativos++;
+    if(st.state === 0 && !state.slots.has(idx)) continue; // slot nunca visto: não polui a lista
+    const card = document.createElement('div');
+    card.className = 'slot-card' + (state.selectedSlot === idx ? ' active' : '');
+    // Nome (TAG) em destaque — mesmo campo que o coleta_ble mostra a
+    // partir de device.name — com o MAC sempre visível como secundário.
+    const nameLine = st.state === 0 ? '—' : (st.name || 'Sem nome');
+    card.innerHTML = `
+      <span class="idx mono">${idx}</span>
+      <span class="state-dot s${st.state}"></span>
+      <span class="info">
+        <div class="name">${nameLine}</div>
+        ${st.state !== 0
+          ? `<div class="mac">${st.mac} <span class="state-label">· ${ACTUATOR_STATE[st.state]}</span></div>`
+          : ''}
+      </span>`;
+    card.title = ACTUATOR_STATE[st.state];
+    card.addEventListener('click', () => selectSlot(idx));
+    wrap.appendChild(card);
+  }
+  if(ativos === 0){
+    wrap.innerHTML = '<div class="empty-hint">Nenhum atuador adicionado ainda. Escolha um da lista de descobertos ao lado, ou adicione manualmente pelo MAC.</div>';
+  }
+  $('slotsSummary').textContent = `${ativos}/${MAX_SLOTS}`;
+}
+
+function renderDiscoveryList(){
+  const wrap = $('discoveryList');
+  const entries = Array.from(state.discovered.values()).sort((a,b) => b.rssi - a.rssi);
+  if(entries.length === 0){
+    wrap.innerHTML = '<div class="empty-hint">Nenhum atuador visto ainda. O Hub avisa aqui assim que algo anunciar por perto.</div>';
+    return;
+  }
+  wrap.innerHTML = '';
+  for(const rec of entries){
+    const bars = rssiBars(rec.rssi);
+    const card = document.createElement('div');
+    card.className = 'disc-card';
+    // Mesma convenção do scanner.py do coleta_ble: "Sem nome" quando o
+    // advertisement não traz Local Name.
+    card.innerHTML = `
+      <span class="rssi-bars">${[0,1,2,3].map(i=>`<i class="${i<bars?'on':''}"></i>`).join('')}</span>
+      <span class="names">
+        <div class="name">${rec.name || 'Sem nome'}</div>
+        <div class="mac">${rec.mac}</div>
+      </span>
+      <span class="rssi">${rec.rssi}dBm</span>
+      ${rec.known ? '<span class="known-tag">na lista</span>' : ''}
+    `;
+    if(!rec.known){
+      const btn = document.createElement('button');
+      btn.className = 'btn small'; btn.textContent = '+';
+      btn.title = 'Adicionar à allow-list';
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        try{ await addActuator(rec.mac, rec.addrType); toast(`Atuador ${rec.name || rec.mac} adicionado.`, 'ok'); }
+        catch(err){ toast('Falha ao adicionar: ' + err.message, 'err'); }
+      });
+      card.appendChild(btn);
+    }
+    wrap.appendChild(card);
+  }
+}
+function rssiBars(rssi){
+  if(rssi >= -60) return 4;
+  if(rssi >= -75) return 3;
+  if(rssi >= -88) return 2;
+  return 1;
+}
+
+function selectSlot(idx){
+  if(state.selectedSlot !== null) stopDiagPolling(state.selectedSlot);
+  state.selectedSlot = idx;
+  $('slotView').classList.remove('hidden');
+  renderSlotList();
+  renderSlotHeader();
+  resetDiagPanel();
+  clearHexConsole();
+  renderQuickCommands();
+
+  const st = getSlotState(idx);
+  if(st.state === 3) startDiagPolling(idx, parseInt($('diagInterval').value, 10));
+}
+
+function renderSlotHeader(){
+  const st = getSlotState(state.selectedSlot);
+  $('slotTitle').textContent = st.state === 0 ? `Slot ${st.idx}` : (st.name || 'Sem nome');
+  $('slotMacSub').textContent = st.state === 0 ? '' : `Slot ${st.idx} · ${st.mac}`;
+  const pill = $('slotStatePill');
+  pill.className = `state-pill s${st.state}`;
+  pill.textContent = ACTUATOR_STATE[st.state];
+  const sw = $('speedSwitch');
+  sw.classList.toggle('on', st.speed === 'fast');
+  $('speedLabel').textContent = st.speed === 'fast' ? 'rápido' : 'lento';
+  const ready = st.state === 3;
+  ['btnDiagOnce','btnDiagPoll','btnHexSend']
+    .forEach(id => { const el = $(id); if(el) el.disabled = !ready; });
+}
+
+function renderQuickCommands(){
+  const wrap = $('quickCmds');
+  wrap.innerHTML = '';
+  QUICK_COMMANDS.forEach(({label, cmd}) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn small';
+    btn.textContent = label;
+    btn.addEventListener('click', () => { $('hexCmdInput').value = toHex(cmd); sendHexCommand(); });
+    wrap.appendChild(btn);
+  });
+}
+
+/* ---- diagnóstico ---- */
+function resetDiagPanel(){
+  $('posPct').textContent = '—'; $('posAd').textContent = '—';
+  $('posDialFill').style.strokeDashoffset = '276.5';
+  $('torNm').textContent = '—'; $('torMax').textContent = '—'; $('torAd').textContent = '—';
+  $('torBar').firstElementChild.style.width = '0%';
+  $('alarmCount').textContent = '—';
+  $('alarmBody').innerHTML = '<span class="faint">Sem leitura ainda.</span>';
+  ['dgTemp','dgHorTotal','dgHorOper','dgPartidas','dgAbreFecha','dgIdxCurva','dgIdxEvento']
+    .forEach(id => $(id).textContent = '—');
+  $('diagLastRead').textContent = 'nunca lido';
+}
+
+function renderDiagnostics(dados){
+  const { pos, tor, alarmes, gerais } = dados;
+
+  $('posPct').textContent = pos.percentual.toFixed(1) + '%';
+  $('posAd').textContent = pos.ad;
+  const circ = 276.5;
+  $('posDialFill').style.strokeDashoffset = String(circ * (1 - Math.min(100, pos.percentual)/100));
+
+  $('torNm').textContent = tor.nm;
+  $('torMax').textContent = tor.nmMax + ' Nm';
+  $('torAd').textContent = tor.ad;
+  const torPct = tor.nmMax > 0 ? Math.min(100, (tor.nm / tor.nmMax) * 100) : 0;
+  const torBar = $('torBar');
+  torBar.className = 'bar' + (torPct >= 90 ? ' crit' : torPct >= 70 ? ' warn' : '');
+  torBar.firstElementChild.style.width = torPct + '%';
+
+  $('alarmCount').textContent = alarmes.ativos.length;
+  const body = $('alarmBody');
+  if(alarmes.ativos.length === 0){
+    body.innerHTML = '<div class="alarm-ok">✓ Nenhum alarme ativo</div>';
+  } else {
+    body.innerHTML = '<div class="alarm-list">' + alarmes.ativos.map(a =>
+      `<div class="alarm-item"><span>${a.nome}</span><span class="idx">#${a.indice} = ${a.valor}</span></div>`
+    ).join('') + '</div>';
+  }
+
+  $('dgTemp').textContent = `${gerais.temp_min.toFixed(1)} / ${gerais.temp_max.toFixed(1)} °C`;
+  $('dgHorTotal').textContent = `${gerais.hora_total}h ${String(gerais.minu_total).padStart(2,'0')}min`;
+  $('dgHorOper').textContent = `${gerais.hora_operan}h ${String(gerais.minu_operan).padStart(2,'0')}min`;
+  $('dgPartidas').textContent = gerais.max_partid_hora;
+  $('dgAbreFecha').textContent = `${gerais.cont_abre} / ${gerais.cont_fecha}`;
+  $('dgIdxCurva').textContent = gerais.index_reg_curv_torq;
+  $('dgIdxEvento').textContent = gerais.absol_index_reg_event;
+
+  $('diagLastRead').textContent = 'atualizado ' + new Date().toLocaleTimeString('pt-BR');
+}
+
+async function lerDiagnosticoCompleto(slot){
+  const [pt, alarmes, gerais] = [
+    await lerPosTor(slot),
+    await lerAlarmes(slot),
+    await lerDadosGerais(slot),
+  ];
+  return { pos: pt.pos, tor: pt.tor, alarmes, gerais };
+}
+
+function stopDiagPolling(slot){
+  const st = getSlotState(slot);
+  if(st.diagTimer){ clearTimeout(st.diagTimer); st.diagTimer = null; }
+  st.diagPolling = false;
+  if(state.selectedSlot === slot){
+    $('btnDiagPoll').textContent = '▶ Iniciar leitura periódica';
+  }
+}
+function startDiagPolling(slot, intervalMs){
+  const st = getSlotState(slot);
+  st.diagPolling = true;
+  if(state.selectedSlot === slot) $('btnDiagPoll').textContent = '■ Parar leitura periódica';
+  const tick = async () => {
+    if(!st.diagPolling) return;
+    try{
+      const dados = await lerDiagnosticoCompleto(slot);
+      if(state.selectedSlot === slot) renderDiagnostics(dados);
+    }catch(e){
+      if(state.selectedSlot === slot) toast('Falha na leitura periódica: ' + e.message, 'err');
+    }
+    if(st.diagPolling) st.diagTimer = setTimeout(tick, intervalMs);
+  };
+  tick();
+}
+
+/* ---- log hex (aba Comando cru) ---- */
+function logHex(slot, dir, bytes){
+  if(state.selectedSlot !== slot) return;
+  const console_ = $('hexConsole');
+  const line = document.createElement('div');
+  line.className = `hex-line ${dir}`;
+  const label = dir === 'tx' ? 'TX »' : dir === 'rx' ? '« RX' : '! ERR';
+  line.innerHTML = `<span class="ts">${new Date().toLocaleTimeString('pt-BR')}</span><span class="dir">${label}</span><span class="bytes">${toHex(bytes)}</span>`;
+  console_.appendChild(line);
+  console_.scrollTop = console_.scrollHeight;
+}
+function clearHexConsole(){ $('hexConsole').innerHTML = ''; }
+
+
+/* =====================================================================
+   COMANDO CRU
+   Curvas e eventos (leitura sequencial em lote, modo rápido/lento,
+   exportação CSV) ficaram fora desta versão de propósito — essa página
+   é para configurar o Hub e ver o estado atual dos atuadores, não para
+   coleta e exportação de histórico. Isso volta quando o coleta_ble
+   ganhar essa função de verdade. As primitivas de protocolo para
+   curvas/eventos (parseCurve, parseEvent, TIPO_CONFIG, baixarSequencia
+   etc., mais acima) continuam no arquivo prontas para quando chegar a
+   hora — não precisam ser reescritas.
+   ===================================================================== */
+async function sendHexCommand(){
+  const slot = state.selectedSlot;
+  if(slot === null) return;
+  const input = $('hexCmdInput');
+  let bytes;
+  try{ bytes = parseHexString(input.value); }
+  catch(e){ toast(e.message, 'err'); return; }
+  if(bytes.length === 0) return;
+  try{
+    await sendCommandAndWaitFrame(slot, Array.from(bytes), 12000);
+  }catch(e){
+    toast('Erro no comando: ' + e.message, 'err');
+  }
+}
+
+/* =====================================================================
+   CONEXÃO
+   ===================================================================== */
+async function connectHub(){
+  if(!navigator.bluetooth){
+    toast('Este navegador não suporta Web Bluetooth. Use Chrome ou Edge.', 'err');
+    return;
+  }
+  try{
+    const device = await navigator.bluetooth.requestDevice({
+      filters: [{ services: [SVC] }],
+      optionalServices: [SVC],
+    });
+    device.addEventListener('gattserverdisconnected', onHubDisconnected);
+    const server = await device.gatt.connect();
+    const service = await server.getPrimaryService(SVC);
+
+    const chars = {};
+    for(const [key, uuid] of Object.entries(CHR)){
+      chars[key] = await service.getCharacteristic(uuid);
+    }
+
+    state.device = device; state.server = server; state.chars = chars;
+
+    await chars.rawData.startNotifications();
+    chars.rawData.addEventListener('characteristicvaluechanged', onRawDataNotify);
+    await chars.status.startNotifications();
+    chars.status.addEventListener('characteristicvaluechanged', onStatusNotify);
+    await chars.discovery.startNotifications();
+    chars.discovery.addEventListener('characteristicvaluechanged', onDiscoveryNotify);
+
+    await refreshStatusAll();
+    await refreshDiscoveryAll();
+
+    setConnectedUI(true, device.name);
+    toast('Conectado ao Hub.', 'ok');
+  }catch(e){
+    if(e.name === 'NotFoundError') return; // usuário cancelou o seletor
+    toast('Falha ao conectar: ' + e.message, 'err');
+    setConnectedUI(false);
+  }
+}
+function onHubDisconnected(){
+  toast('Conexão com o Hub perdida.', 'err');
+  setConnectedUI(false);
+}
+async function disconnectHub(){
+  if(state.device && state.device.gatt.connected) state.device.gatt.disconnect();
+  setConnectedUI(false);
+}
+
+/* =====================================================================
+   WIRING
+   ===================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Só mostra aviso técnico se a página realmente não puder usar Web
+  // Bluetooth aqui — o caso comum (hospedada em https/localhost, Chrome
+  // ou Edge) não exibe nada disso.
+  (function checkEnv(){
+    const el = $('envWarning');
+    if(!navigator.bluetooth){
+      el.textContent = 'Este navegador não suporta Web Bluetooth. Abra este link no Chrome ou no Edge (no iPhone/iPad, use um navegador como o Bluefy).';
+      el.classList.remove('hidden');
+    } else if(!window.isSecureContext){
+      el.textContent = 'Esta página precisa ser aberta em https://, http://localhost ou http://127.0.0.1 para o Bluetooth funcionar.';
+      el.classList.remove('hidden');
+    }
+  })();
+
+  $('btnConnect').addEventListener('click', connectHub);
+  $('btnDisconnect').addEventListener('click', disconnectHub);
+
+  $('btnManualAdd').addEventListener('click', async () => {
+    const mac = $('manualMac').value;
+    const addrType = parseInt($('manualType').value, 10);
+    try{
+      macToBytes(mac); // valida antes de escrever
+      await addActuator(mac, addrType);
+      toast(`Atuador ${mac.toUpperCase()} adicionado.`, 'ok');
+      $('manualMac').value = '';
+    }catch(e){ toast(e.message, 'err'); }
+  });
+
+  $('btnClearDiscovery').addEventListener('click', async () => {
+    try{ await hubClearDiscovery(); state.discovered.clear(); renderDiscoveryList(); }
+    catch(e){ toast('Falha: ' + e.message, 'err'); }
+  });
+  $('btnRestartScan').addEventListener('click', async () => {
+    try{ await hubRestartScan(); toast('Scan reiniciado.', 'ok'); }
+    catch(e){ toast('Falha: ' + e.message, 'err'); }
+  });
+
+  $('btnRemoveSlot').addEventListener('click', async () => {
+    const st = getSlotState(state.selectedSlot);
+    if(st.state === 0) return;
+    const rotulo = st.name || st.mac;
+    if(!confirm(`Remover "${rotulo}" da lista de autorizados?\n\nO Hub vai desconectar e NÃO vai tentar reconectar sozinho. Para voltar, será preciso adicionar de novo.`)){
+      return;
+    }
+    try{ await removeActuator(st.mac, st.addrType); toast(`Atuador ${rotulo} removido.`, 'ok'); }
+    catch(e){ toast('Falha ao remover: ' + e.message, 'err'); }
+  });
+  $('btnDisconnectSlot').addEventListener('click', async () => {
+    try{ await hubDisconnectSlot(state.selectedSlot); }
+    catch(e){ toast('Falha: ' + e.message, 'err'); }
+  });
+
+  $('speedSwitch').addEventListener('click', async () => {
+    const st = getSlotState(state.selectedSlot);
+    const fast = st.speed !== 'fast';
+    try{
+      await hubSetSpeed(state.selectedSlot, fast);
+      st.speed = fast ? 'fast' : 'slow';
+      renderSlotHeader();
+    }catch(e){ toast('Falha ao mudar modo: ' + e.message, 'err'); }
+  });
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector(`.tab-panel[data-tab="${btn.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
+  $('btnDiagOnce').addEventListener('click', async () => {
+    const slot = state.selectedSlot;
+    try{ renderDiagnostics(await lerDiagnosticoCompleto(slot)); }
+    catch(e){ toast('Falha na leitura: ' + e.message, 'err'); }
+  });
+  $('btnDiagPoll').addEventListener('click', () => {
+    const slot = state.selectedSlot;
+    const st = getSlotState(slot);
+    if(st.diagPolling) stopDiagPolling(slot);
+    else startDiagPolling(slot, parseInt($('diagInterval').value, 10));
+  });
+
+  $('btnHexSend').addEventListener('click', sendHexCommand);
+  $('hexCmdInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') sendHexCommand(); });
+  $('btnHexClear').addEventListener('click', clearHexConsole);
+
+  $('manualMac').addEventListener('input', (e) => {
+    let v = e.target.value.toUpperCase().replace(/[^0-9A-F]/g,'');
+    v = v.slice(0,12).match(/.{1,2}/g);
+    e.target.value = v ? v.join(':') : '';
+  });
+});
+
+
+</script>
+</body>
+</html>
