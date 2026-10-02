@@ -303,6 +303,21 @@ header .spacer{ flex:1; }
 /* formulário de adição manual */
 .manual-add{ padding:8px 14px 12px; display:flex; flex-direction:column; gap:6px; }
 .manual-add .row{ display:flex; gap:6px; }
+.param-card{ grid-column:1 / -1; }
+.pin-overlay{ position:fixed; inset:0; background:rgba(17,24,39,.45); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; }
+.pin-overlay.hidden{ display:none; }
+.pin-box{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px; width:100%; max-width:300px; box-shadow:0 10px 30px rgba(0,0,0,.2); }
+.pin-box h4{ margin:0 0 6px; color:var(--text-strong); }
+.pin-box .field{ width:100%; font-size:20px; letter-spacing:8px; text-align:center; }
+.pin-err{ color:var(--danger-strong); font-size:12px; margin:8px 0 0; }
+.param-group{ border-top:1px solid var(--border, rgba(127,127,127,.25)); padding:6px 0; }
+.param-group > summary{ cursor:pointer; font-weight:600; font-size:12.5px; padding:4px 0; }
+.param-rows{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:4px 16px; padding:4px 0 6px; }
+.param-row{ display:flex; flex-direction:column; gap:3px; }
+.param-row .row{ display:flex; gap:6px; align-items:center; }
+.param-row .field{ max-width:150px; }
+.param-row .hint{ font-size:10.5px; color:var(--text-muted); }
+.param-warn{ font-size:11.5px; color:var(--danger-strong); background:var(--danger-soft); border-radius:6px; padding:6px 8px; margin:4px 0 8px; }
 .field{
   background:var(--surface); border:1px solid var(--border-input);
   border-radius:var(--radius-input); color:var(--text-strong);
@@ -401,6 +416,49 @@ header .spacer{ flex:1; }
 .readout-row:last-child{ border-bottom:none; }
 .readout-row .k{ color:var(--text-secondary); }
 .readout-row .v{ font-family:var(--font-mono); color:var(--text-dark); }
+
+/* ---------- comando do atuador (card Posição) ---------- */
+.cmd-row{ display:flex; gap:8px; margin-top:14px; }
+.cmd-row .btn{ flex:1; padding:6px 8px; }
+.mode-row{ margin-top:12px; }
+.mode-row select{ width:100%; margin-top:4px; padding:5px 6px; border:1px solid var(--border-input); border-radius:var(--radius-input); background:var(--surface); }
+.btn.cmd-open:hover{ border-color:var(--success-border); background:var(--success-soft); color:var(--success-label); }
+.btn.cmd-stop{ border-color:var(--warning); color:var(--warning-strong); }
+.btn.cmd-stop:hover{ background:var(--warning-soft); border-color:var(--warning-strong); }
+
+/* Indicador de movimento: o botao do sentido ativo pisca. */
+@keyframes blinkOpen{
+  0%,100%{ background:var(--surface); border-color:var(--border-input); color:var(--text-dark); }
+  50%{ background:var(--success); border-color:var(--success-border); color:#fff; }
+}
+@keyframes blinkClose{
+  0%,100%{ background:var(--surface); border-color:var(--border-input); color:var(--text-dark); }
+  50%{ background:var(--danger); border-color:var(--danger-strong); color:#fff; }
+}
+.btn.blink-open{ animation:blinkOpen .9s ease-in-out infinite; }
+.btn.blink-close{ animation:blinkClose .9s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce){
+  .btn.blink-open{ animation:none; background:var(--success-soft); border-color:var(--success-border); color:var(--success-label); }
+  .btn.blink-close{ animation:none; background:var(--danger-soft); border-color:var(--danger-strong); color:var(--danger-strong); }
+}
+
+/* ---------- lista de alarmes (papel de atuador) ---------- */
+.alarm-blocked{
+  display:inline-block; margin-bottom:10px; padding:3px 10px;
+  border-radius:var(--radius-pill); font-size:10.5px; font-weight:700;
+  letter-spacing:.05em; text-transform:uppercase;
+  background:var(--danger-soft); color:var(--danger-strong);
+  border:1px solid var(--danger-soft-border);
+}
+.alarm-list{ display:flex; flex-direction:column; margin-bottom:12px; }
+.alarm-list .row{
+  display:flex; align-items:center; gap:8px; font-size:12px; padding:4px 0;
+  border-bottom:1px solid var(--border); color:var(--text-secondary);
+}
+.alarm-list .row:last-child{ border-bottom:none; }
+.alarm-list .dot{ width:8px; height:8px; border-radius:50%; background:var(--border-muted); flex:0 0 auto; }
+.alarm-list .row.on{ color:var(--danger-strong); font-weight:600; }
+.alarm-list .row.on .dot{ background:var(--danger); }
 
 /* mostrador circular de posição — elemento de assinatura */
 .dial-wrap{ display:flex; align-items:center; gap:18px; }
@@ -592,6 +650,22 @@ label.small-label{ display:block; font-size:10.5px; color:var(--text-muted); mar
                 <div class="readout-row"><span class="k">Valor AD</span><span class="v" id="localPosAd">—</span></div>
               </div>
             </div>
+            <div class="cmd-row">
+              <button class="btn small cmd-open" id="btnCmdOpen">Abrir</button>
+              <button class="btn small cmd-stop" id="btnCmdStop">Parar</button>
+              <button class="btn small" id="btnCmdClose">Fechar</button>
+            </div>
+            <div class="mode-row">
+              <label class="small-label" for="modeSelect">Modo de operacao</label>
+              <select class="field mono" id="modeSelect">
+                <option value="2">Local (interface)</option>
+                <option value="3">Remoto (rede)</option>
+                <option value="1">Parado</option>
+              </select>
+              <p class="faint hidden" id="modeHint" style="font-size:11px; margin:6px 0 0;">
+                Comandos daqui so' valem em modo <strong>Local</strong>.
+              </p>
+            </div>
           </div>
 
           <div class="card">
@@ -619,43 +693,29 @@ label.small-label{ display:block; font-size:10.5px; color:var(--text-muted); mar
             </div>
           </div>
 
+          <div class="card param-card">
+            <h4>Parâmetros (paramDado)</h4>
+            <p class="faint" style="font-size:11px; margin:0 0 8px;">
+              Mapa completo do fwBLE, área Painel <span class="mono">0x00800800</span> (144 bytes).
+              Cada <b>salvar</b> escreve o campo e grava na memória (IFCC_SAVE). Valores fora da faixa
+              do fwBLE são recusados pelo firmware.
+            </p>
+            <div class="row" style="gap:6px; margin-bottom:8px;">
+              <button class="btn small ghost" id="btnParamReload" title="Relê os 144 bytes da unidade.">Reler</button>
+              <button class="btn small ghost" id="btnParamRestore"
+                title="Descarta alterações não gravadas e volta para o que está na memória (IFCC_RESTORE).">Restaurar gravado</button>
+            </div>
+            <div id="paramGroups"><span class="faint">Conecte para ler os parâmetros.</span></div>
+          </div>
+
           <div class="card">
-            <h4>Calibração</h4>
-            <div class="manual-add">
-              <label class="small-label">Limite superior — posição (AD, 50–2001)</label>
-              <div class="row">
-                <input class="field mono" id="calibLimiteSuper" type="number" min="50" max="2001" style="max-width:110px;">
-                <button class="btn small" id="btnSetLimiteSuper">salvar</button>
-              </div>
-            </div>
-            <div class="manual-add">
-              <label class="small-label">Limite inferior — posição (AD, 50–2001)</label>
-              <div class="row">
-                <input class="field mono" id="calibLimiteInfer" type="number" min="50" max="2001" style="max-width:110px;">
-                <button class="btn small" id="btnSetLimiteInfer">salvar</button>
-              </div>
-            </div>
-            <div class="manual-add">
-              <label class="small-label">Limite torque abrindo (Nm, 1–1400)</label>
-              <div class="row">
-                <input class="field mono" id="calibTorqueInc" type="number" min="1" max="1400" style="max-width:110px;">
-                <button class="btn small" id="btnSetTorqueInc">salvar</button>
-              </div>
-            </div>
-            <div class="manual-add">
-              <label class="small-label">Limite torque fechando (Nm, 1–1400)</label>
-              <div class="row">
-                <input class="field mono" id="calibTorqueDec" type="number" min="1" max="1400" style="max-width:110px;">
-                <button class="btn small" id="btnSetTorqueDec">salvar</button>
-              </div>
-            </div>
-            <div class="manual-add">
-              <label class="small-label">Zero do torque</label>
-              <button class="btn small ghost" id="btnTareTorque"
-                title="Captura a leitura atual do sensor de torque como o novo zero. Aplique sem carga no atuador.">
-                Desloca zero
-              </button>
-            </div>
+            <h4>Alarmes</h4>
+            <span class="alarm-blocked hidden" id="alarmBlocked">Movimento bloqueado</span>
+            <div class="alarm-list" id="alarmList"></div>
+            <button class="btn small ghost" id="btnAckAlarm"
+              title="Quita (limpa a sinalização de) alarmes cuja condição já cessou. Não afeta alarmes ainda ativos.">
+              Quitar alarmes
+            </button>
           </div>
         </div>
       </div>
@@ -785,6 +845,21 @@ label.small-label{ display:block; font-size:10.5px; color:var(--text-muted); mar
 
 <div id="toasts"></div>
 
+<!-- Senha de acesso na conexao - versao PROVISORIA (so' na interface, ver
+     docs/SEGURANCA_SENHA.md). Nao e' controle de acesso de verdade. -->
+<div class="pin-overlay hidden" id="pinOverlay">
+  <div class="pin-box" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+    <h4 id="pinTitle">Senha de acesso</h4>
+    <p class="faint" id="pinMsg" style="font-size:12px; margin:0 0 10px;">Digite a senha de 4 dígitos do equipamento.</p>
+    <input class="field mono" id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
+    <p class="pin-err hidden" id="pinErr"></p>
+    <div class="row" style="gap:6px; justify-content:flex-end; margin-top:12px;">
+      <button class="btn small ghost" id="pinCancel">Cancelar</button>
+      <button class="btn small" id="pinOk">Entrar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 'use strict';
 /* =====================================================================
@@ -811,8 +886,8 @@ const CHR = {
   // docs/SENSORES_I2C.md.
   rx: '06290002-0538-408d-8359-e83d95ae1d60', // write   [msg_t(8)] pedido
   tx: '06290003-0538-408d-8359-e83d95ae1d60', // notify  [msg_t(8)][payload] resposta
-  calibCtrl:  '0000152d-1212-efde-1523-785feabcd123', // write   [cmd][args]
-  calibState: '0000152e-1212-efde-1523-785feabcd123', // read+notify (10 bytes)
+  // (Calib Ctrl/State 152d/152e removidas - parametros agora pela area
+  // Painel 0x00800800 via rx/tx, ver PARAMS_AREA_ADDR.)
 };
 
 const MAX_SLOTS = 19;
@@ -1226,46 +1301,547 @@ const ACG_MSG_REQUEST = 0x03;
 const ACG_MSG_RESPONSE = 0x06;
 const ACG_MSG_NEG = 0x07;
 
-// Calibracao ao vivo desta unidade (Calib State, 06290002../152e...) -
-// defaults batem com actuator_calib.c ate a primeira leitura/notify
-// chegar. So existe pro sensor LOCAL - um atuador remoto num slot nao
-// expoe a propria calibracao por aqui.
-let localCalib = { limiteSuper: 1800, limiteInfer: 200, torqueNmInc: 80, torqueNmDec: 80, torqueZero: 0 };
+/* =====================================================================
+   PARAMETROS (paramDado do fwBLE) - area Painel REAL do ifFerConfig,
+   0x00800800, 144 bytes, layout byte a byte do tParamDado (ParamZarI.h,
+   sem POS_ABS). Offsets/faixas espelham actuator_params.{c,h} - se mudar
+   um, muda o outro. Ver docs/PARAMETROS.md.
 
-function parseCalibState(bytes){
-  if(bytes.length < 10) throw new ProtocolError('Calib State curta demais.');
-  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  return {
-    limiteSuper: dv.getUint16(0, true),
-    limiteInfer: dv.getUint16(2, true),
-    torqueNmInc: dv.getUint16(4, true),
-    torqueNmDec: dv.getUint16(6, true),
-    torqueZero: dv.getInt16(8, true),
+   Salvar um campo = GTM_SEND no offset dele (o firmware valida contra
+   paramMin/paramMax e responde GTM_NEG se estiver fora) + IFCC_SAVE na
+   area Comando (0x00800000, campo cmd no offset 2) pra gravar.
+   ===================================================================== */
+const PARAMS_AREA_ADDR = 0x00800800;
+const PARAMS_SIZE = 144;
+const PARAMS_CHUNK = 72; // cabe num notify com MTU >= 83
+const CMD_AREA_ADDR = 0x00800000;
+const IFCC = { SAVE: 0x0002, RESTORE: 0x0004 };
+
+// Imagem atual (Uint8Array(144)) - null ate a primeira leitura.
+let paramImage = null;
+// Fonte de torque vista no ultimo polling do sensor (TORQUE_SOURCE) -
+// decide se os campos quantitativos de torque aparecem. null = ainda
+// nao sabe (mostra tudo).
+let paramTorqueSource = null;
+// Grupo Fabrica desbloqueado nesta conexao (pede a senha de novo).
+let fabUnlocked = false;
+
+const OPT_NAO_SIM = ['Não', 'Sim'];
+const PARAM_GROUPS = [
+  { id:'pos',   title:'Posição' },
+  { id:'trq',   title:'Torque' },
+  { id:'alm',   title:'Alarme' },
+  { id:'ger',   title:'Gerais' },
+  { id:'esd',   title:'Função — Emerg. Shutdown (ESD)' },
+  { id:'pst',   title:'Função — Partial Stroke Test (PST)' },
+  { id:'amp',   title:'Amplia tempo' },
+  { id:'rede',  title:'Rede (Modbus RTU)' },
+  { id:'fab',   title:'Fábrica / Segurança', locked:true },
+];
+
+// t: u8 | u16 | i16 | bits8 (byte, shift, width) | bits16 | str (len) |
+//    pin (len digitos, um por byte, 0-9)
+// quant: so' aparece com celula de carga (fonte de torque analogica) -
+//    com microchaves (ON/OFF) o valor de torque nao e' quantitativo.
+// Faixas = paramMin/paramMax do ParamZarI.c. Sem min/max = sem checagem
+// no firmware (1 bit, strings, torqueZero...).
+const PARAM_MAP = [
+  // --- Posição (PARAM. POSIC) ---
+  { g:'pos', k:'limiteSuper', label:'Limite A/D Aberto', off:36, t:'u16', min:50, max:2001 },
+  { g:'pos', k:'limiteInfer', label:'Limite A/D Fechado', off:38, t:'u16', min:50, max:2001 },
+  { g:'pos', k:'faixaParado', label:'Banda Morta (0,1 %)', off:48, t:'u8', min:1, max:100 },
+  { g:'pos', k:'limiteMargem', label:'Sensibilidade Limite de Posição (0,1 %)', off:47, t:'u8', min:2, max:100 },
+  { g:'pos', k:'anteciparParada', label:'Antecipa Parada (0,1 %)', off:49, t:'u8', min:0, max:100 },
+  { g:'pos', k:'antiHorario', label:'Anti-Horário (espelha os limites)', off:34, t:'bits8', shift:2, width:1, opts:OPT_NAO_SIM },
+  // --- Torque ---
+  { g:'trq', k:'torqueNmInc', label:'Torque de Abertura [Nm]', off:40, t:'u16', range:'fab', quant:true },
+  { g:'trq', k:'torqueNmDec', label:'Torque de Fechamento [Nm]', off:42, t:'u16', range:'fab', quant:true },
+  { g:'trq', k:'sobrTorqPart', label:'Sobre Torque na Partida (%)', off:46, t:'u8', min:5, max:200, quant:true },
+  { g:'trq', k:'deslTrqIncr', label:'Desliga Torque de Abertura', off:34, t:'bits8', shift:4, width:1, opts:OPT_NAO_SIM },
+  { g:'trq', k:'trqFechad', label:'Fechamento com Torque', off:34, t:'bits8', shift:5, width:1, opts:OPT_NAO_SIM },
+  { g:'trq', k:'torqueZero', label:'Torque Zero A/D', off:44, t:'i16', tare:true, quant:true },
+  // --- Alarme ---
+  { g:'alm', k:'alAtQtLoc', label:'Quitar Alarme Localmente (ao entrar em Parado)', off:34, t:'bits8', shift:6, width:1, opts:OPT_NAO_SIM },
+  { g:'alm', k:'tempoOperar', label:'Tempo de Operação Máximo permitido (s)', off:84, t:'i16', min:0, max:3600 },
+  { g:'alm', k:'numPartMaxLig', label:'Número de Partidas Máximo ativado', off:78, t:'bits8', shift:4, width:1, opts:OPT_NAO_SIM },
+  { g:'alm', k:'numPartMax', label:'Número de Partidas Máximo permitido (por hora)', off:86, t:'i16', min:1, max:1200 },
+  // --- Gerais (CONFIG. GERAL) ---
+  { g:'ger', k:'ledVermAbre', label:'LED Vermelho indica Aberto', off:50, t:'bits8', shift:0, width:1, opts:OPT_NAO_SIM },
+  { g:'ger', k:'ledLjAlarme', label:'LED Laranja sinal Alarme', off:50, t:'bits8', shift:1, width:1, opts:OPT_NAO_SIM },
+  { g:'ger', k:'inibCmdLoc', label:'Inibe Comando Local (bloqueia comandos desta interface)', off:34, t:'bits8', shift:3, width:1, opts:OPT_NAO_SIM },
+  { g:'ger', k:'idioma', label:'Idioma', off:35, t:'u8', min:0, max:2, opts:['Português', 'Espanhol', 'Inglês'] },
+  { g:'ger', k:'tag', label:'Tag do Atuador', off:55, t:'str', len:16 },
+  // --- ESD ---
+  { g:'esd', k:'ESDAc', label:'ESD Ação', off:74, t:'u8', min:0, max:4, opts:['N. AC', 'Abre', 'Fecha', 'Para', 'Posic.'] },
+  { g:'esd', k:'ESDPosic', label:'ESD Posição (%)', off:76, t:'u16', min:0, max:100 },
+  { g:'esd', k:'ESDDSAq', label:'ESD com Sobreaquecimento', off:78, t:'bits8', shift:0, width:1, opts:OPT_NAO_SIM },
+  { g:'esd', k:'ESDDFFa', label:'ESD com Falta de Fase', off:78, t:'bits8', shift:1, width:1, opts:OPT_NAO_SIM },
+  { g:'esd', k:'ESDDTrq', label:'ESD com Torque', off:78, t:'bits8', shift:2, width:1, opts:OPT_NAO_SIM },
+  // --- PST ---
+  { g:'pst', k:'PSTM', label:'PST Modo', off:79, t:'u8', min:0, max:2, opts:['Inativo', 'Remoto', 'Local'] },
+  { g:'pst', k:'PSTI', label:'PST Posição Inicial', off:78, t:'bits8', shift:3, width:1, opts:['Fechado', 'Aberto'] },
+  { g:'pst', k:'PSTP', label:'PST Deslocamento (%)', off:80, t:'u8', min:3, max:90 },
+  { g:'pst', k:'PSTT', label:'PST Tempo (s)', off:82, t:'u16', min:3, max:3000 },
+  // --- Amplia tempo ---
+  { g:'amp', k:'ampTempLig', label:'Amplia Tempo ativado', off:78, t:'bits8', shift:5, width:1, opts:OPT_NAO_SIM },
+  { g:'amp', k:'ampTempPosX', label:'Posição Intermediária do Amplia Tempo na abertura (%)', off:107, t:'u8', min:0, max:95 },
+  { g:'amp', k:'ampTempAT1Par', label:'Amplia Tempo 1 - tempo parado na abertura', off:88, t:'bits16', shift:0, width:9, min:0, max:500 },
+  { g:'amp', k:'ampTempAT1Mov', label:'Amplia Tempo 1 - tempo de movimento na abertura', off:88, t:'bits16', shift:9, width:7, min:1, max:120 },
+  { g:'amp', k:'ampTempAT2Par', label:'Amplia Tempo 2 - tempo parado na abertura', off:110, t:'bits16', shift:0, width:9, min:0, max:500 },
+  { g:'amp', k:'ampTempAT2Mov', label:'Amplia Tempo 2 - tempo de movimento na abertura', off:110, t:'bits16', shift:9, width:7, min:1, max:120 },
+  { g:'amp', k:'ampTempPosY', label:'Posição Intermediária do Amplia Tempo no fechamento (%)', off:108, t:'u8', min:0, max:95 },
+  { g:'amp', k:'ampTempAT3Par', label:'Amplia Tempo 3 - tempo parado no fechamento', off:90, t:'bits16', shift:0, width:9, min:0, max:500 },
+  { g:'amp', k:'ampTempAT3Mov', label:'Amplia Tempo 3 - tempo de movimento no fechamento', off:90, t:'bits16', shift:9, width:7, min:1, max:120 },
+  { g:'amp', k:'ampTempAT4Par', label:'Amplia Tempo 4 - tempo parado no fechamento', off:112, t:'bits16', shift:0, width:9, min:0, max:500 },
+  { g:'amp', k:'ampTempAT4Mov', label:'Amplia Tempo 4 - tempo de movimento no fechamento', off:112, t:'bits16', shift:9, width:7, min:1, max:120 },
+  // (E/S digital/analogica do fwBLE - iOD/iOA, SinSaid*, laco de corrente -
+  // ficam no paramDado do firmware, mas NAO aparecem: a E/S do SIM Connect
+  // e' o bloco do EV-AD74412R, sem paridade com o fwBLE. Ver IO_TIPOS.)
+  // --- Rede ---
+  { g:'rede', k:'rede', label:'Habilita Interface de Rede', off:72, t:'bits16', shift:2, width:1, opts:OPT_NAO_SIM },
+  { g:'rede', k:'enderRede', label:'Endereço de Rede', off:103, t:'u8', min:1, max:247 },
+  { g:'rede', k:'baudRateRede', label:'Baudrate da Comunicação', off:104, t:'u8', min:0, max:11,
+    opts:['300', '600', '1200', '2400', '4800', '9600', '14400', '19200', '28800', '38400', '57600', '115200'] },
+  { g:'rede', k:'bitFormatRede', label:'Formatação Bits Serial', off:105, t:'bits8', shift:0, width:3, min:0, max:4, opts:['Par', 'Ímpar', 'Sem', 'Marca', 'Espaço'] },
+  { g:'rede', k:'mapMem', label:'Mapa de Memória', off:105, t:'bits8', shift:3, width:5, min:0, max:1, opts:['Padrão', 'Legado'] },
+  { g:'rede', k:'acaoRedeFalhaCom', label:'Ação Falha Comunicação', off:102, t:'u8', min:0, max:4, opts:['Nenhuma', 'Parar', 'Abrir', 'Fechar', 'Posicionar'] },
+  { g:'rede', k:'tempoEspera', label:'Tempo de Espera para Falha de Comunicação (×0,1 s)', off:101, t:'u8', min:1, max:250 },
+  { g:'rede', k:'posicRedeFalhaCom', label:'Posição para Falha de Comunicação com Rede (%)', off:100, t:'u8', min:0, max:100 },
+  { g:'rede', k:'comanPrimar', label:'Comando Primário', off:106, t:'bits8', shift:0, width:4, min:0, max:2, opts:['Discreta', 'Rede', 'Analógica'] },
+  { g:'rede', k:'modoContr', label:'Modo de Comando', off:106, t:'bits8', shift:4, width:4, min:0, max:1, opts:['Discreto', 'Contínuo'] },
+  // --- Fábrica (sParamFab + flags) ---
+  { g:'fab', k:'model', label:'Modelo', off:0, t:'str', len:16 },
+  { g:'fab', k:'ns', label:'Número de série', off:16, t:'str', len:8 },
+  { g:'fab', k:'fabFatTorqAber', label:'Fator de Torque de Abertura (×0,001)', off:24, t:'u16', min:1, max:30000 },
+  { g:'fab', k:'fabFatTorqFech', label:'Fator de Torque de Fechamento (×0,001)', off:26, t:'u16', min:1, max:30000 },
+  { g:'fab', k:'fabTorqMax', label:'Torque Máximo [Nm]', off:28, t:'u16', min:1, max:1400 },
+  { g:'fab', k:'fabTorqMin', label:'Torque Mínimo [Nm]', off:30, t:'u16', min:1, max:1400 },
+  { g:'fab', k:'fabGanSenTorq', label:'Ganho do Sensor de Torque', off:32, t:'u8', min:0, max:3 },
+  { g:'fab', k:'fabLeitPosiInver', label:'Inverte sentido do Sensor de Posição', off:33, t:'u8', min:0, max:1, opts:OPT_NAO_SIM },
+  { g:'fab', k:'fabPront', label:'Fábrica Pronto', off:34, t:'bits8', shift:0, width:1, opts:OPT_NAO_SIM },
+  { g:'fab', k:'Ok', label:'Configuração OK', off:34, t:'bits8', shift:1, width:1, opts:OPT_NAO_SIM, ro:true },
+  // senha[4]: um digito (0-9) por byte no fio, como no fwBLE - a interface
+  // edita como um campo unico de 4 digitos. Fica no grupo travado: so'
+  // troca a senha quem acabou de confirmar a atual no desbloqueio.
+  { g:'fab', k:'senha', label:'Nova senha de acesso (4 dígitos)', off:51, t:'pin', len:4 },
+];
+
+function paramFieldSize(f){
+  if(f.t === 'str' || f.t === 'pin') return f.len;
+  return (f.t === 'u8' || f.t === 'bits8') ? 1 : 2;
+}
+
+function paramGet(img, f){
+  const dv = new DataView(img.buffer, img.byteOffset, img.byteLength);
+  switch(f.t){
+    case 'u8':  return img[f.off];
+    case 'u16': return dv.getUint16(f.off, true);
+    case 'i16': return dv.getInt16(f.off, true);
+    case 'bits8':  return (img[f.off] >> f.shift) & ((1 << f.width) - 1);
+    case 'bits16': return (dv.getUint16(f.off, true) >> f.shift) & ((1 << f.width) - 1);
+    case 'pin': return Array.from(img.subarray(f.off, f.off + f.len), d => String(d % 10)).join('');
+    case 'str': {
+      const raw = img.subarray(f.off, f.off + f.len);
+      const end = raw.indexOf(0);
+      return new TextDecoder('latin1').decode(end >= 0 ? raw.subarray(0, end) : raw);
+    }
+  }
+}
+
+// Bytes a escrever pra mudar o campo f para v, partindo da imagem atual
+// (campos de bit preservam os vizinhos do mesmo byte/palavra).
+function paramEncode(img, f, v){
+  const size = paramFieldSize(f);
+  const out = new Uint8Array(img.subarray(f.off, f.off + size));
+  const dv = new DataView(out.buffer);
+  switch(f.t){
+    case 'u8':  out[0] = v & 0xFF; break;
+    case 'u16': dv.setUint16(0, v, true); break;
+    case 'i16': dv.setInt16(0, v, true); break;
+    case 'bits8': {
+      const mask = ((1 << f.width) - 1) << f.shift;
+      out[0] = (out[0] & ~mask) | ((v << f.shift) & mask);
+      break;
+    }
+    case 'bits16': {
+      const mask = ((1 << f.width) - 1) << f.shift;
+      dv.setUint16(0, (dv.getUint16(0, true) & ~mask) | ((v << f.shift) & mask), true);
+      break;
+    }
+    case 'pin': {
+      for(let i = 0; i < f.len; i++) out[i] = v.charCodeAt(i) - 48; // '0'..'9' -> 0..9
+      break;
+    }
+    case 'str': {
+      out.fill(0);
+      for(let i = 0; i < Math.min(v.length, f.len - 1); i++) out[i] = v.charCodeAt(i) & 0xFF;
+      break;
+    }
+  }
+  return out;
+}
+
+function paramRange(f, img){
+  if(f.range === 'fab'){
+    const dv = new DataView(img.buffer, img.byteOffset, img.byteLength);
+    return { min: dv.getUint16(30, true), max: dv.getUint16(28, true) }; // fabTorqMin/Max
+  }
+  return { min: f.min, max: f.max };
+}
+
+async function readParams(){
+  const img = new Uint8Array(PARAMS_SIZE);
+  for(let off = 0; off < PARAMS_SIZE; off += PARAMS_CHUNK){
+    const len = Math.min(PARAMS_CHUNK, PARAMS_SIZE - off);
+    const part = await sendAcgRequest(PARAMS_AREA_ADDR + off, len);
+    if(part.length < len) throw new ProtocolError('Resposta do paramDado curta demais.');
+    img.set(part.subarray(0, len), off);
+  }
+  paramImage = img;
+  renderParams();
+  return img;
+}
+
+async function sendIfcc(cmd){
+  await sendAcgWrite(CMD_AREA_ADDR + 2, [cmd & 0xFF, (cmd >> 8) & 0xFF]);
+}
+
+// Salvar de um campo: escreve, grava (IFCC_SAVE) e rele tudo - a releitura
+// mostra efeitos colaterais (ex.: trocar Anti-horario espelha os limites).
+async function saveParam(f, value){
+  if(!paramImage) throw new ProtocolError('Parâmetros ainda não lidos.');
+  await sendAcgWrite(PARAMS_AREA_ADDR + f.off, Array.from(paramEncode(paramImage, f, value)));
+  await sendIfcc(IFCC.SAVE);
+  await readParams();
+}
+
+// Desloca zero: no fwBLE (paramModTrqZero) torqueZero = leitura A/D atual
+// de torque. Aqui a interface le o ad_torque da area Sensor (bytes 4..5,
+// sem zero subtraido) e grava no campo - mesmo efeito, sem comando novo.
+async function tareTorqueZero(f){
+  const sensor = await sendAcgRequest(SENSOR_AREA_ADDR, 10);
+  const dv = new DataView(sensor.buffer, sensor.byteOffset, sensor.byteLength);
+  const adTorque = dv.getInt16(4, true);
+  await saveParam(f, adTorque);
+  return adTorque;
+}
+
+function renderParams(){
+  const host = $('paramGroups');
+  if(!paramImage){ host.innerHTML = '<span class="faint">Conecte para ler os parâmetros.</span>'; return; }
+
+  // Preserva quais grupos estavam abertos entre re-renderizacoes.
+  const open = new Set([...host.querySelectorAll('details[open]')].map(d => d.dataset.g));
+  host.innerHTML = '';
+
+  for(const grp of PARAM_GROUPS){
+    const det = document.createElement('details');
+    det.className = 'param-group';
+    det.dataset.g = grp.id;
+    if(open.has(grp.id)) det.open = true;
+    const sum = document.createElement('summary');
+    const travado = grp.locked && !fabUnlocked;
+    sum.textContent = grp.title + (grp.locked ? (travado ? '  🔒' : '  🔓') : '');
+    det.appendChild(sum);
+
+    if(grp.locked){
+      const aviso = document.createElement('p');
+      aviso.className = 'param-warn';
+      aviso.textContent = travado
+        ? 'Configurações sensíveis de fábrica e de segurança (modelo, N/S, fatores e limites de torque, sentido do sensor, senha de acesso). Alterá-las pode descalibrar ou bloquear o equipamento.'
+        : 'Atenção: configurações de fábrica e de segurança. Altere só se souber o efeito - valores errados descalibram o equipamento, e uma senha esquecida bloqueia o acesso.';
+      det.appendChild(aviso);
+      if(travado){
+        const btnUnlock = document.createElement('button');
+        btnUnlock.className = 'btn small';
+        btnUnlock.textContent = 'Desbloquear (pede a senha)';
+        btnUnlock.addEventListener('click', async () => {
+          const ok = await askAccessPin({
+            titulo: 'Fábrica / Segurança',
+            msg: 'Confirme a senha atual do equipamento para editar as configurações de fábrica e a senha.',
+          });
+          if(ok){ fabUnlocked = true; renderParams(); toast('Parâmetros de fábrica desbloqueados nesta conexão.', 'ok'); }
+          else{ toast('Senha não confirmada - fábrica continua bloqueada.', 'err'); }
+        });
+        det.appendChild(btnUnlock);
+        host.appendChild(det);
+        continue;
+      }
+    }
+
+    const rows = document.createElement('div');
+    rows.className = 'param-rows';
+
+    const semQuant = paramTorqueSource === TORQUE_SOURCE.ONOFF;
+    if(grp.id === 'trq' && semQuant){
+      const nota = document.createElement('p');
+      nota.className = 'faint';
+      nota.style.cssText = 'font-size:11px; margin:2px 0 4px;';
+      nota.textContent = 'Sensor de torque por microchaves: valores de torque (Nm, sobre torque, zero) não se aplicam.';
+      det.appendChild(nota);
+    }
+
+    for(const f of PARAM_MAP.filter(p => p.g === grp.id && !(p.quant && semQuant))){
+      const cur = paramGet(paramImage, f);
+      const { min, max } = paramRange(f, paramImage);
+      const row = document.createElement('div');
+      row.className = 'param-row';
+
+      const lbl = document.createElement('label');
+      lbl.className = 'small-label';
+      lbl.textContent = f.label;
+      row.appendChild(lbl);
+
+      const line = document.createElement('div');
+      line.className = 'row';
+      let input;
+      if(f.opts){
+        input = document.createElement('select');
+        input.className = 'field';
+        f.opts.forEach((txt, i) => {
+          const o = document.createElement('option');
+          o.value = i; o.textContent = txt;
+          input.appendChild(o);
+        });
+        if(cur >= f.opts.length){
+          // valor fora da lista (nao deveria acontecer) - mostra cru
+          const o = document.createElement('option');
+          o.value = cur; o.textContent = String(cur);
+          input.appendChild(o);
+        }
+        input.value = cur;
+      }else{
+        input = document.createElement('input');
+        input.className = 'field mono';
+        if(f.t === 'str'){
+          input.type = 'text'; input.maxLength = f.len - 1;
+        }else if(f.t === 'pin'){
+          input.type = 'password'; input.maxLength = f.len;
+          input.inputMode = 'numeric'; input.autocomplete = 'new-password';
+          input.placeholder = '••••';
+        }else{
+          input.type = 'number';
+          if(min !== undefined) input.min = min;
+          if(max !== undefined) input.max = max;
+        }
+        // Senha: nunca preenche com a atual (so' digita a nova).
+        input.value = f.t === 'pin' ? '' : cur;
+      }
+      input.disabled = !!f.ro;
+      line.appendChild(input);
+
+      if(!f.ro){
+        const btn = document.createElement('button');
+        btn.className = 'btn small';
+        btn.textContent = 'salvar';
+        btn.addEventListener('click', async () => {
+          let v;
+          if(f.t === 'str'){
+            v = input.value;
+          }else if(f.t === 'pin'){
+            v = input.value.trim();
+            if(v.length !== f.len || !/^[0-9]+$/.test(v)){
+              toast(`A senha deve ter exatamente ${f.len} dígitos (0–9).`, 'err');
+              return;
+            }
+          }else{
+            v = parseInt(input.value, 10);
+            if(Number.isNaN(v) || (min !== undefined && v < min) || (max !== undefined && v > max)){
+              toast(`Valor fora da faixa (${min}–${max}).`, 'err');
+              return;
+            }
+          }
+          try{
+            await saveParam(f, v);
+            toast(`${f.label}: salvo.`, 'ok');
+          }catch(e){ toast('Falha: ' + e.message, 'err'); }
+        });
+        line.appendChild(btn);
+      }
+
+      if(f.tare){
+        const tare = document.createElement('button');
+        tare.className = 'btn small ghost';
+        tare.textContent = 'capturar atual';
+        tare.title = 'Grava a leitura A/D atual do torque como zero. Aplique sem carga no atuador.';
+        tare.addEventListener('click', async () => {
+          try{
+            const ad = await tareTorqueZero(f);
+            toast(`Zero deslocado para ${ad} (leitura A/D atual).`, 'ok');
+          }catch(e){ toast('Falha: ' + e.message, 'err'); }
+        });
+        line.appendChild(tare);
+      }
+      row.appendChild(line);
+
+      if(min !== undefined && !f.opts){
+        const hint = document.createElement('span');
+        hint.className = 'hint';
+        hint.textContent = `faixa ${min}–${max}` + (f.range === 'fab' ? ' (torque mín./máx. de fábrica)' : '');
+        row.appendChild(hint);
+      }
+      rows.appendChild(row);
+    }
+    det.appendChild(rows);
+    host.appendChild(det);
+  }
+
+  renderIoBlock(host, open.has('io'));
+}
+
+/* =====================================================================
+   E/S DE CAMPO (EV-AD74412R) - PREVIA SO' NA INTERFACE (feira, 2026-10)
+   4 canais (A-D), cada um configuravel pelo usuario: tipo (entrada/saida,
+   digital/analogica), papel e, nos analogicos, a faixa do sinal. SEM
+   paridade com o fwBLE (os campos de IO Digital/Analogica do paramDado
+   nao aparecem mais).
+   Ainda NAO fala com o firmware: o driver do AD74412R esta' no passo 1
+   (branch integra-ios-digitais). A escolha fica so' na memoria da pagina
+   e o "salvar" esta' desabilitado. Quando o firmware existir, a ideia e'
+   uma area acgl sintetica propria (faixa 0xF0000000+), 3 bytes por canal
+   [tipo][papel][sinal] - os indices abaixo ja' sao esses valores.
+   ===================================================================== */
+const IO_CANAIS = ['A', 'B', 'C', 'D'];
+const IO_TIPOS = ['Desativado', 'Entrada digital', 'Saída digital', 'Entrada analógica', 'Saída analógica'];
+const IO_TIPO = { DESATIVADO: 0, DI: 1, DO: 2, AI: 3, AO: 4 };
+const IO_PAPEIS = {
+  [IO_TIPO.DESATIVADO]: ['—'],
+  [IO_TIPO.DI]: ['Nenhum', 'Abrir', 'Fechar', 'Parar', 'Quitar alarmes', 'Inibe comando local'],
+  [IO_TIPO.DO]: ['Nenhum', 'Sinaliza aberto', 'Sinaliza fechado', 'Sinaliza modo remoto', 'Sinaliza modo local', 'Sinaliza alarme', 'Sinaliza movimento'],
+  [IO_TIPO.AI]: ['Nenhum', 'Demanda de posição'],
+  [IO_TIPO.AO]: ['Nenhum', 'Retransmissão de posição', 'Retransmissão de torque'],
+};
+const IO_SINAIS = ['4–20 mA', '0–10 V'];
+let ioCfgDraft = IO_CANAIS.map(() => ({ tipo: 0, papel: 0, sinal: 0 }));
+
+function renderIoBlock(host, aberto){
+  const det = document.createElement('details');
+  det.className = 'param-group';
+  det.dataset.g = 'io';
+  if(aberto) det.open = true;
+  const sum = document.createElement('summary');
+  sum.textContent = 'E/S de campo (EV-AD74412R)';
+  det.appendChild(sum);
+
+  const aviso = document.createElement('p');
+  aviso.className = 'param-warn';
+  aviso.textContent = 'Prévia: a configuração ainda não é enviada ao equipamento (firmware de E/S em desenvolvimento).';
+  det.appendChild(aviso);
+
+  const rows = document.createElement('div');
+  rows.className = 'param-rows';
+
+  const mkSelect = (opcoes, valor, onChange) => {
+    const s = document.createElement('select');
+    s.className = 'field';
+    opcoes.forEach((txt, i) => {
+      const o = document.createElement('option');
+      o.value = i; o.textContent = txt;
+      s.appendChild(o);
+    });
+    s.value = valor;
+    s.addEventListener('change', () => onChange(parseInt(s.value, 10)));
+    return s;
   };
+
+  IO_CANAIS.forEach((nome, i) => {
+    const c = ioCfgDraft[i];
+    const row = document.createElement('div');
+    row.className = 'param-row io-canal';
+
+    const lbl = document.createElement('label');
+    lbl.className = 'small-label';
+    lbl.textContent = 'Canal ' + nome;
+    row.appendChild(lbl);
+
+    const line = document.createElement('div');
+    line.className = 'row';
+    line.style.flexWrap = 'wrap';
+    line.appendChild(mkSelect(IO_TIPOS, c.tipo, v => {
+      c.tipo = v; c.papel = 0; c.sinal = 0;
+      renderIoBlock.rerender();
+    }));
+    if(c.tipo !== IO_TIPO.DESATIVADO){
+      line.appendChild(mkSelect(IO_PAPEIS[c.tipo], c.papel, v => { c.papel = v; }));
+    }
+    if(c.tipo === IO_TIPO.AI || c.tipo === IO_TIPO.AO){
+      line.appendChild(mkSelect(IO_SINAIS, c.sinal, v => { c.sinal = v; }));
+    }
+    row.appendChild(line);
+    rows.appendChild(row);
+  });
+  det.appendChild(rows);
+
+  const salvar = document.createElement('button');
+  salvar.className = 'btn small';
+  salvar.textContent = 'salvar E/S';
+  salvar.disabled = true;
+  salvar.title = 'Disponível quando o firmware de E/S (AD74412R) estiver pronto.';
+  det.appendChild(salvar);
+
+  // Re-renderiza so' este bloco (troca de tipo muda os selects do canal),
+  // mantendo-o aberto e na mesma posicao.
+  renderIoBlock.rerender = () => {
+    const novo = document.createElement('div');
+    renderIoBlock(novo, true);
+    det.replaceWith(novo.firstChild);
+  };
+  host.appendChild(det);
 }
 
-function syncCalibInputs(){
-  $('calibLimiteSuper').value = localCalib.limiteSuper;
-  $('calibLimiteInfer').value = localCalib.limiteInfer;
-  $('calibTorqueInc').value = localCalib.torqueNmInc;
-  $('calibTorqueDec').value = localCalib.torqueNmDec;
+/* Senha de acesso na conexao - VERSAO PROVISORIA (feira, 2026-10).
+   A conferencia e' feita AQUI, no navegador, contra senha[4] lida do
+   paramDado (offset 0x33). NAO e' seguranca de verdade: o firmware nao
+   exige nada, qualquer cliente BLE (ex.: app nRF Connect) le e escreve
+   tudo, e a propria senha trafega em claro na leitura. Solucao
+   definitiva (firmware SIM Connect + fwBLE): docs/SEGURANCA_SENHA.md.
+   Aceita a senha configurada OU a senha padrao 1934, igual a IHM do
+   fwBLE (ifIhmSenhConf / senhaPadrao em ParamZarI.c). */
+const PIN_MAX_TENTATIVAS = 3;
+const PIN_PADRAO = '1934';
+
+// Tambem reaproveitada pra desbloquear o grupo Fabrica (opts.titulo/msg).
+function askAccessPin(opts = {}){
+  const f = PARAM_MAP.find(p => p.k === 'senha');
+  const configurada = paramGet(paramImage, f);
+  const overlay = $('pinOverlay'), input = $('pinInput'), err = $('pinErr');
+  let tentativas = 0;
+  $('pinTitle').textContent = opts.titulo || 'Senha de acesso';
+  $('pinMsg').textContent = opts.msg || 'Digite a senha de 4 dígitos do equipamento.';
+
+  return new Promise(resolve => {
+    const fim = (ok) => {
+      overlay.classList.add('hidden');
+      $('pinOk').onclick = $('pinCancel').onclick = input.onkeydown = null;
+      resolve(ok);
+    };
+    const conferir = () => {
+      const v = input.value.trim();
+      if(v === configurada || v === PIN_PADRAO){ fim(true); return; }
+      tentativas++;
+      if(tentativas >= PIN_MAX_TENTATIVAS){ fim(false); return; }
+      err.textContent = `Senha incorreta (${PIN_MAX_TENTATIVAS - tentativas} tentativa(s) restante(s)).`;
+      err.classList.remove('hidden');
+      input.value = ''; input.focus();
+    };
+    input.value = '';
+    err.classList.add('hidden');
+    overlay.classList.remove('hidden');
+    $('pinOk').onclick = conferir;
+    $('pinCancel').onclick = () => fim(false);
+    input.onkeydown = (ev) => {
+      if(ev.key === 'Enter') conferir();
+      else if(ev.key === 'Escape') fim(false);
+    };
+    input.focus();
+  });
 }
 
-function onCalibStateNotify(ev){
-  const dv = ev.target.value;
-  const bytes = new Uint8Array(dv.buffer, dv.byteOffset, dv.byteLength);
-  try{ localCalib = parseCalibState(bytes); syncCalibInputs(); }
-  catch(e){ console.warn('Calib State invalida:', e.message); }
-}
-
-// Opcodes da Calib Ctrl (06290002../152d...) - ver my_lbs.h
-const CALIB_CTRL = { LIMITE_SUPER: 0x01, LIMITE_INFER: 0x02, TORQUE_NM_INC: 0x03, TORQUE_NM_DEC: 0x04, TARE_TORQUE: 0x05 };
-
-async function writeCalib(opcode, value){
-  const bytes = value === undefined
-    ? [opcode]
-    : [opcode, value & 0xFF, (value >> 8) & 0xFF]; // u16 little-endian
-  await writeChar(state.chars.calibCtrl, bytes);
+// Limites de torque configurados (pra barra de torque do card Sensor).
+function paramTorqueLimits(){
+  if(!paramImage) return { inc: 80, dec: 80 }; // defaults do paramInic
+  const dv = new DataView(paramImage.buffer);
+  return { inc: dv.getUint16(40, true), dec: dv.getUint16(42, true) };
 }
 
 let pendingLocalSensor = null;
@@ -1285,6 +1861,39 @@ function onSensorTxNotify(ev){
 // entre ADS1000 analogico e PCA9536 ON/OFF).
 const INFO_AREA_ADDR = 0xF0000000;
 const TORQUE_SOURCE = { NONE: 0, ANALOG: 1, ONOFF: 2 };
+
+// Area sintetica NOSSA (resumo do papel de atuador DESTA unidade, ver
+// actuator_service.c): [u16 LE bitmap de alarmes][u8 flags: bit0 =
+// movimento bloqueado][u8 estado de movimento]. NAO confundir com
+// ALARM_NAMES (acima, 118 entradas) - aquela e' a lista completa do
+// fwBLE, usada pra decodificar os alarmes de um atuador REMOTO num slot.
+// Esta e' so' os alarmes portados ate agora (enum actuator_alarm_id), na
+// ordem do bit.
+const ALARM_AREA_ADDR = 0xF0000010;
+const LOCAL_ALARM_NAMES = [
+  'ESD externo', 'Parada local', 'Modo nao remoto', 'Local inibido',
+  'Acionamento invertido', 'Operacao manual', 'PST em execucao', 'PST falhou',
+  'Falha com. sensor de posicao',
+];
+// enum actuator_mov_status (actuator_alarm.h) - byte 3 da area de status.
+const MOV_STT = { L_SUPER: 1, L_INFER: 2, ABRINDO: 3, FECHANDO: 4, PARADO: 5 };
+// enum actuator_mode (actuator_mode.h) - byte 4 da area de status.
+const MODE = { DESLIGA: 0, PARA: 1, LOCAL: 2, REMOTO: 3, PARAM: 4, INFO: 5 };
+const MODE_NAMES = { 0:'Desligado', 1:'Parado', 2:'Local (interface)', 3:'Remoto (rede)', 4:'Parametrizacao', 5:'Informacao' };
+
+// Painel Remoto (entrada de comando) - endereco REAL do ifFerConfig
+// (MSG_EX_ADDRESS_CONFIG_REM_PANEL_CTL), palavra de 16 bits com o mesmo
+// layout do ifFerConfigCmdRemPanelCtl_t. Ver actuator_panel.c.
+const PANEL_AREA_ADDR = 0x00805900;
+const PANEL_BIT = {
+  CMD_OPEN: 1 << 0, CMD_CLOSE: 1 << 1, CMD_STOP: 1 << 2, ACK_ALARM: 1 << 3,
+  ALLOC: 1 << 14, FREE: 1 << 15,
+};
+// Campo `mode` (bits 4-6) da palavra: 7 = nao mexer no modo. Comandos
+// normais carregam isso; so' o seletor de modo manda 0..5.
+const PANEL_MODE_KEEP = 7 << 4;
+const ACG_MSG_SEND = 0x04;
+const ACG_MSG_CONFIRM = 0x05;
 
 // Contador do idMsgHost (acgl) - o firmware so' ecoa esse valor de volta
 // (actuator_service.c: set_response_header copia req->id_msg_host sem
@@ -1315,12 +1924,71 @@ function buildAcgRequestFrame(address, lenData, msgId){
   return new Uint8Array(buf);
 }
 
+// Fila especifica de acgl: um pedido/escrita acgl em voo por vez
+// (pendingLocalSensor e' um unico slot). O polling do sensor local ja
+// era sequencial dentro de um tick; withAcg() estende isso pra cobrir
+// tambem os comandos do Painel (botoes Abrir/Parar/Fechar/Quitar),
+// que podem cair no meio de um tick. Fica por baixo de withGatt()
+// (operacao GATT crua), como pendingLocalSensor ja ficava.
+let acgChain = Promise.resolve();
+function withAcg(fn){
+  const run = acgChain.then(fn, fn);
+  acgChain = run.catch(() => {});
+  return run;
+}
+
+function buildAcgSendFrame(address, dataBytes, msgId){
+  // msg_hdr (8) + payload. type = GTM_SEND, lenData = tamanho do payload.
+  const buf = new ArrayBuffer(8 + dataBytes.length);
+  const dv = new DataView(buf);
+  dv.setUint16(0, msgId, true);
+  dv.setUint8(2, ACG_MSG_SEND);
+  dv.setUint8(3, dataBytes.length);
+  dv.setUint32(4, address, true);
+  const u8 = new Uint8Array(buf);
+  u8.set(dataBytes, 8);
+  return u8;
+}
+
+// Escrita acgl (GTM_SEND) - espera GTM_CONFIRM (0x05). Mesmo slot
+// pendingLocalSensor / mesma characteristic TX que os pedidos de leitura.
+function sendAcgWrite(address, dataBytes, timeoutMs=6000){
+  return withAcg(() => {
+    const id = nextAcgMsgId();
+    return new Promise(async (resolve, reject) => {
+      let settled = false;
+      const timer = setTimeout(() => {
+        if(settled) return;
+        settled = true; pendingLocalSensor = null;
+        reject(new ProtocolError('Tempo de resposta excedido (acgl SEND).'));
+      }, timeoutMs);
+      pendingLocalSensor = {
+        id,
+        onFrame: (bytes) => {
+          if(settled) return;
+          settled = true; clearTimeout(timer);
+          try{
+            if(bytes.length < 8) throw new ProtocolError('Resposta acgl curta demais.');
+            const type = bytes[2];
+            if(type === ACG_MSG_NEG) throw new ProtocolError('Comando recusado pelo firmware (GTM_NEG).');
+            if(type !== ACG_MSG_CONFIRM) throw new ProtocolError(`Tipo de resposta inesperado (0x${type.toString(16)}).`);
+            resolve();
+          }catch(e){ reject(e); }
+        },
+      };
+      try{
+        await writeChar(state.chars.rx, buildAcgSendFrame(address, dataBytes, id));
+      }catch(e){
+        if(!settled){ settled = true; clearTimeout(timer); pendingLocalSensor = null; reject(e); }
+      }
+    });
+  });
+}
+
 // Pedido generico GTM_REQUEST/GTM_RESPONSE - reaproveitado pra
-// qualquer area (Sensor, Info...). So' um pedido em voo por vez
-// (pendingLocalSensor e' um unico slot) - por isso lerSensorLocal()/
-// lerTorqueSource() sao sempre aguardados em sequencia, nunca em
-// paralelo (ver startLocalSensorPolling()).
+// qualquer area (Sensor, Info, Alarmes...). Serializado por withAcg().
 function sendAcgRequest(address, lenData, timeoutMs=6000){
+ return withAcg(() => {
   const id = nextAcgMsgId();
   return new Promise(async (resolve, reject) => {
     let settled = false;
@@ -1363,6 +2031,7 @@ function sendAcgRequest(address, lenData, timeoutMs=6000){
       if(!settled){ settled = true; clearTimeout(timer); pendingLocalSensor = null; reject(e); }
     }
   });
+ });
 }
 
 async function lerSensorLocal(){
@@ -1373,6 +2042,66 @@ async function lerSensorLocal(){
 async function lerTorqueSource(){
   const payload = await sendAcgRequest(INFO_AREA_ADDR, 1);
   return payload[0];
+}
+
+// NOTE: "Local" no nome de proposito - ja existe um lerAlarmes(slot) mais
+// abaixo pra alarmes de um atuador REMOTO num slot. Esta le a area
+// sintetica de status DESTA unidade (papel de atuador): alarmes + estado
+// de movimento.
+async function lerAlarmesLocal(timeoutMs){
+  const p = await sendAcgRequest(ALARM_AREA_ADDR, 5, timeoutMs);
+  return {
+    bitmap: p[0] | (p[1] << 8),
+    blocked: (p[2] & 0x01) !== 0,
+    movStt: p.length > 3 ? p[3] : MOV_STT.PARADO, // tolera firmware antigo
+    mode: p.length > 4 ? p[4] : MODE.LOCAL,       // idem
+  };
+}
+
+function renderAlarmes({ bitmap, blocked, movStt, mode }){
+  $('alarmBlocked').classList.toggle('hidden', !blocked);
+  const list = $('alarmList');
+  list.innerHTML = '';
+  for(let i = 0; i < LOCAL_ALARM_NAMES.length; i++){
+    const on = (bitmap & (1 << i)) !== 0;
+    const row = document.createElement('div');
+    row.className = 'row' + (on ? ' on' : '');
+    row.innerHTML = '<span class="dot"></span><span></span>';
+    row.lastElementChild.textContent = LOCAL_ALARM_NAMES[i];
+    list.appendChild(row);
+  }
+  // Indicador de movimento: o botao do sentido ativo pisca (verde abrindo,
+  // vermelho fechando).
+  $('btnCmdOpen').classList.toggle('blink-open', movStt === MOV_STT.ABRINDO);
+  $('btnCmdClose').classList.toggle('blink-close', movStt === MOV_STT.FECHANDO);
+  // Modo atual: sincroniza o seletor (a menos que o usuario esteja mexendo
+  // nele) e avisa quando NAO for Local que os comandos daqui sao ignorados.
+  const sel = $('modeSelect');
+  if(document.activeElement !== sel && Number(sel.value) !== mode){ sel.value = String(mode); }
+  $('modeHint').classList.toggle('hidden', mode === MODE.LOCAL);
+}
+
+/* Comando do atuador via Painel Remoto (acgl GTM_SEND na area
+   0x00805900). Todo comando leva ALLOC junto (re-arma o lease de 5s no
+   mesmo ciclo) e MODE_KEEP (nao mexe no modo). */
+async function panelWrite(word){
+  await sendAcgWrite(PANEL_AREA_ADDR, [word & 0xFF, (word >> 8) & 0xFF]);
+}
+async function panelCmd(cmdBits){
+  await panelWrite(cmdBits | PANEL_BIT.ALLOC | PANEL_MODE_KEEP);
+}
+async function panelSetMode(mode){
+  // Troca de modo: campo `mode` = 0..5, sem bits de comando. Leva ALLOC.
+  await panelWrite(((mode & 0x7) << 4) | PANEL_BIT.ALLOC);
+}
+async function cmdOpen(){  await panelCmd(PANEL_BIT.CMD_OPEN); }
+async function cmdClose(){ await panelCmd(PANEL_BIT.CMD_CLOSE); }
+async function cmdStop(){  await panelCmd(PANEL_BIT.CMD_STOP); }
+async function cmdAckAlarm(){
+  await panelCmd(PANEL_BIT.ACK_ALARM);
+  // O firmware nao auto-limpa o bit ack_alarm (so' os cmd_*) - limpa
+  // aqui com uma segunda escrita (mantem lease e modo).
+  await panelCmd(0);
 }
 
 function resetLocalSensorPanel(){
@@ -1387,9 +2116,20 @@ function resetLocalSensorPanel(){
   $('localTorNoneView').classList.add('hidden');
   $('localLastRead').textContent = 'nunca lido';
   $('localLastRead').classList.remove('stale');
+  $('alarmBlocked').classList.add('hidden');
+  $('alarmList').innerHTML = '';
+  $('btnCmdOpen').classList.remove('blink-open');
+  $('btnCmdClose').classList.remove('blink-close');
+  $('modeSelect').value = String(MODE.LOCAL);
+  $('modeHint').classList.add('hidden');
 }
 
 function renderLocalSensor({ pos, tor }, torqueSource){
+  // Celula de carga x microchaves muda quais parametros de torque aparecem.
+  if(torqueSource !== paramTorqueSource){
+    paramTorqueSource = torqueSource;
+    if(paramImage) renderParams();
+  }
   const circ = 276.5;
 
   // Posicao e torque agora sao independentes (2026-08-26 - antes, a
@@ -1424,11 +2164,12 @@ function renderLocalSensor({ pos, tor }, torqueSource){
     $('localTorAbertura').classList.toggle('tripped', (tor.ad & 0x02) !== 0);
     $('localTorFechamento').classList.toggle('tripped', (tor.ad & 0x01) !== 0);
   } else if(torqueSource === TORQUE_SOURCE.ANALOG){
-    // Barra proporcional ao limite CONFIGURADO (torqueNmInc/torqueNmDec -
-    // ver Calib Ctrl/State), nao a um maximo historico bruto. Sem rastreio
-    // de sentido de movimento (abrindo/fechando) ainda, usamos o menor dos
-    // dois limites - referencia mais conservadora.
-    const limiteNm = Math.min(localCalib.torqueNmInc, localCalib.torqueNmDec);
+    // Barra proporcional ao limite CONFIGURADO (torqueNmInc/torqueNmDec do
+    // paramDado), nao a um maximo historico bruto. Sem rastreio de sentido
+    // de movimento (abrindo/fechando) ainda, usamos o menor dos dois
+    // limites - referencia mais conservadora.
+    const lim = paramTorqueLimits();
+    const limiteNm = Math.min(lim.inc, lim.dec);
     $('localTorNm').textContent = tor.nm;
     $('localTorMax').textContent = limiteNm + ' Nm';
     $('localTorAd').textContent = tor.ad;
@@ -1448,8 +2189,10 @@ const LOCAL_SENSOR_POLL_MS = 2000;
 // valores iniciais mesmo com o sensor instavel; sem isto, dados antigos
 // ficavam na tela indefinidamente, indistinguiveis de dados frescos).
 const LOCAL_SENSOR_STALE_AFTER = 2;
+const ALARM_POLL_MS = 1500; // status (alarme + estado de movimento) - rapido o bastante pro indicador de "abrindo/fechando"
 let localSensorPolling = false;
 let localSensorTimer = null;
+let alarmPollTimer = null;
 let localSensorFailStreak = 0;
 
 function markLocalSensorStale(){
@@ -1461,6 +2204,7 @@ function markLocalSensorStale(){
 function stopLocalSensorPolling(){
   localSensorPolling = false;
   if(localSensorTimer){ clearTimeout(localSensorTimer); localSensorTimer = null; }
+  if(alarmPollTimer){ clearTimeout(alarmPollTimer); alarmPollTimer = null; }
 }
 function startLocalSensorPolling(){
   localSensorPolling = true;
@@ -1491,6 +2235,23 @@ function startLocalSensorPolling(){
     if(localSensorPolling) localSensorTimer = setTimeout(tick, LOCAL_SENSOR_POLL_MS);
   };
   tick();
+
+  // Alarmes num loop SEPARADO, mais lento: posicao/torque sao o que a
+  // tela mostra o tempo todo e precisam de cadencia; alarme so' muda de
+  // vez em quando. Loop proprio pra nao tirar round-trips do polling de
+  // posicao (todo pedido acgl e' serializado por withAcg - somar a
+  // leitura de alarme ao mesmo tick deixava a posicao visivelmente mais
+  // lenta). Timeout curto: uma falha aqui recupera rapido.
+  const alarmTick = async () => {
+    if(!localSensorPolling) return;
+    try{
+      renderAlarmes(await lerAlarmesLocal(2500));
+    }catch(e){
+      console.warn('Falha lendo alarmes:', e.message);
+    }
+    if(localSensorPolling) alarmPollTimer = setTimeout(alarmTick, ALARM_POLL_MS);
+  };
+  alarmTick();
 }
 
 /* =====================================================================
@@ -1785,6 +2546,10 @@ function setConnectedUI(connected, name){
     state.slots.forEach(st => stopDiagPolling(st.idx));
     stopLocalSensorPolling();
     resetLocalSensorPanel();
+    paramImage = null;
+    paramTorqueSource = null;
+    fabUnlocked = false;
+    renderParams();
   }
 }
 
@@ -2079,14 +2844,19 @@ async function connectGateway(){
     chars.discovery.addEventListener('characteristicvaluechanged', onDiscoveryNotify);
     await withGatt(() => chars.tx.startNotifications());
     chars.tx.addEventListener('characteristicvaluechanged', onSensorTxNotify);
-    await withGatt(() => chars.calibState.startNotifications());
-    chars.calibState.addEventListener('characteristicvaluechanged', onCalibStateNotify);
+    // Senha de acesso (PROVISORIA - so' na interface, ver
+    // docs/SEGURANCA_SENHA.md). Falha fechada: sem conseguir ler a senha
+    // do equipamento, nao entra.
     try{
-      const current = await readChar(chars.calibState);
-      localCalib = parseCalibState(new Uint8Array(current.buffer, current.byteOffset, current.byteLength));
-      syncCalibInputs();
+      await readParams();
     }catch(e){
-      console.warn('Nao foi possivel ler a Calib State inicial:', e.message);
+      throw new Error('não foi possível ler os parâmetros para conferir a senha (' + e.message + ')');
+    }
+    if(!(await askAccessPin())){
+      if(device.gatt.connected) device.gatt.disconnect();
+      setConnectedUI(false);
+      toast('Acesso negado - desconectado.', 'err');
+      return;
     }
 
     await refreshStatusAll();
@@ -2152,30 +2922,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }catch(e){ toast('Falha: ' + e.message, 'err'); }
   });
 
-  function bindCalibSave(btnId, inputId, opcode, min, max){
-    $(btnId).addEventListener('click', async () => {
-      const raw = $(inputId).value.trim();
-      const value = parseInt(raw, 10);
-      if(raw === '' || Number.isNaN(value) || value < min || value > max){
-        toast(`Valor fora da faixa (${min}–${max}).`, 'err');
-        return;
-      }
-      try{
-        await writeCalib(opcode, value);
-        toast('Calibração salva.', 'ok');
-      }catch(e){ toast('Falha: ' + e.message, 'err'); }
-    });
-  }
-  bindCalibSave('btnSetLimiteSuper', 'calibLimiteSuper', CALIB_CTRL.LIMITE_SUPER, 50, 2001);
-  bindCalibSave('btnSetLimiteInfer', 'calibLimiteInfer', CALIB_CTRL.LIMITE_INFER, 50, 2001);
-  bindCalibSave('btnSetTorqueInc', 'calibTorqueInc', CALIB_CTRL.TORQUE_NM_INC, 1, 1400);
-  bindCalibSave('btnSetTorqueDec', 'calibTorqueDec', CALIB_CTRL.TORQUE_NM_DEC, 1, 1400);
-
-  $('btnTareTorque').addEventListener('click', async () => {
+  // Parametros (paramDado) - os "salvar" de cada campo sao ligados em
+  // renderParams(); aqui so' os botoes do card.
+  $('btnParamReload').addEventListener('click', async () => {
+    try{ await readParams(); toast('Parâmetros relidos.', 'ok'); }
+    catch(e){ toast('Falha: ' + e.message, 'err'); }
+  });
+  $('btnParamRestore').addEventListener('click', async () => {
     try{
-      await writeCalib(CALIB_CTRL.TARE_TORQUE);
-      toast('Zero deslocado (definido pela leitura atual do torque).', 'ok');
+      await sendIfcc(IFCC.RESTORE);
+      // O restore roda na workqueue do firmware - da' um respiro antes de reler.
+      await new Promise(r => setTimeout(r, 300));
+      await readParams();
+      toast('Parâmetros restaurados do que está gravado.', 'ok');
     }catch(e){ toast('Falha: ' + e.message, 'err'); }
+  });
+
+  // Comando do atuador (Painel Remoto). O controle e' quem aciona o
+  // motor e para no limite/na demanda/por alarme - o botao so' injeta a
+  // demanda, igual fara qualquer interface externa.
+  const bindCmd = (btnId, fn, okMsg) => $(btnId).addEventListener('click', async () => {
+    try{ await fn(); toast(okMsg, 'ok'); }
+    catch(e){ toast('Falha: ' + e.message, 'err'); }
+  });
+  bindCmd('btnCmdOpen',  cmdOpen,     'Comando ABRIR enviado.');
+  bindCmd('btnCmdStop',  cmdStop,     'Comando PARAR enviado.');
+  bindCmd('btnCmdClose', cmdClose,    'Comando FECHAR enviado.');
+  bindCmd('btnAckAlarm', cmdAckAlarm, 'Quitacao de alarmes enviada.');
+
+  $('modeSelect').addEventListener('change', async (e) => {
+    const mode = Number(e.target.value);
+    try{ await panelSetMode(mode); toast('Modo: ' + (MODE_NAMES[mode] || mode), 'ok'); }
+    catch(err){ toast('Falha ao trocar modo: ' + err.message, 'err'); }
   });
 
   $('btnClearDiscovery').addEventListener('click', async () => {
