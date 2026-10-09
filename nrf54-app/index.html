@@ -907,6 +907,11 @@ button.device-row:hover{ background:color-mix(in srgb, var(--primary-soft) 60%, 
   font-weight:700; color:var(--foreground); font-variant-numeric:tabular-nums;
 }
 .dial-unit{ margin-left:.06em; font-size:.5em; font-weight:600; letter-spacing:0; color:var(--muted-foreground); }
+/* nas pontas do curso, a palavra no lugar do número: menor, para caber no
+   anel, e na cor que a legenda teria */
+.dial-pct.dial-word{ font-size:20px; font-size:14cqi; letter-spacing:0; }
+.dial[data-pos="open"] .dial-word{ color:var(--success); }
+.dial[data-pos="closed"] .dial-word{ color:var(--anomaly); }
 .dial-caption{ font-size:var(--fs-xs); font-size:clamp(12px, 7cqi, 16px); color:var(--muted-foreground); }
 .dial[data-pos="open"] .dial-caption{ color:var(--success); font-weight:700; }
 .dial[data-pos="closed"] .dial-caption,
@@ -991,8 +996,10 @@ button.device-row:hover{ background:color-mix(in srgb, var(--primary-soft) 60%, 
    marcado vira cartão e ganha um ponto, para não depender só da cor. */
 .cmd-field{ display:flex; flex-direction:column; min-width:0; }
 .mode-field{ display:flex; flex-direction:column; min-width:0; }
+/* colunas iguais; só onde o terço não comporta o texto (celular de 320 a
+   ~350 px) a coluna cresce até o texto e as outras cedem */
 .segmented{
-  display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:var(--sp-1);
+  display:grid; grid-template-columns:repeat(3, minmax(max-content, 1fr)); gap:var(--sp-1);
   padding:var(--sp-1); background:var(--primary-soft);
   border-radius:var(--radius-lg);
 }
@@ -1777,8 +1784,8 @@ button.device-row:hover{ background:color-mix(in srgb, var(--primary-soft) 60%, 
                 <div class="mode-field" role="group" aria-labelledby="modeLabel">
                   <span class="label" id="modeLabel">Modo de operação</span>
                   <div class="segmented" id="modeSwitch">
-                    <button type="button" class="segment" data-mode="2" aria-pressed="false" title="Local (SIMControl)">Local</button>
-                    <button type="button" class="segment" data-mode="3" aria-pressed="false" title="Remoto (rede)">Remoto</button>
+                    <button type="button" class="segment" data-mode="2" aria-pressed="false" title="Via SIMControl">SIMControl</button>
+                    <button type="button" class="segment" data-mode="3" aria-pressed="false" title="Via Interface de Rede">Rede</button>
                     <button type="button" class="segment" data-mode="1" aria-pressed="false">Desligado</button>
                   </div>
                   <!-- Só fora do modo Local: avisa que Abrir/Parar/Fechar
@@ -2832,7 +2839,7 @@ const EV_NAMES = {
   10:'Evento inválido', 11:'Evento inválido lido', 12:'Curva inválida lida', 13:'Curvas coletadas',
   199:'Movimento bloqueado por alarme',
   600:'PST local', 601:'Modo: Desligado', 602:'Comando local: abrir', 603:'Comando local: fechar',
-  604:'Alarmes quitados (local)', 605:'Modo: Local', 606:'Modo: Desligado', 607:'Modo: Remoto',
+  604:'Alarmes quitados (local)', 605:'Modo: SIMControl', 606:'Modo: Desligado', 607:'Modo: Rede',
   608:'Modo: Informação', 609:'Modo: Parametrização', 610:'Modo: Parametrização de fábrica',
   700:'ESD remoto', 701:'PST remoto', 702:'Comando remoto: parar', 703:'Comando remoto: abrir',
   704:'Comando remoto: fechar', 705:'Comando local inibido pelo remoto', 706:'Comando remoto: posicionar',
@@ -3486,9 +3493,9 @@ const LOCAL_ALARM_FWBLE_ID = [14, 15, 16, 26, 28, 32, 47, 48, 2, 11, 12, 13, 17,
 const MOV_STT = { L_SUPER: 1, L_INFER: 2, ABRINDO: 3, FECHANDO: 4, PARADO: 5 };
 // enum actuator_mode (actuator_mode.h) - byte 4 da area de status.
 const MODE = { DESLIGA: 0, PARA: 1, LOCAL: 2, REMOTO: 3, PARAM: 4, INFO: 5 };
-const MODE_NAMES = { 0:'Desligado', 1:'Desligado', 2:'Local (SIMControl)', 3:'Remoto (rede)', 4:'Parametrização', 5:'Informação' };
+const MODE_NAMES = { 0:'Desligado', 1:'Desligado', 2:'Via SIMControl', 3:'Via Interface de Rede', 4:'Parametrização', 5:'Informação' };
 // Versão curta, para os chips de modo (lista lateral e título do Gateway).
-const MODE_SHORT = { 0:'Desligado', 1:'Desligado', 2:'Local', 3:'Remoto', 4:'Parametrização', 5:'Informação' };
+const MODE_SHORT = { 0:'Desligado', 1:'Desligado', 2:'SIMControl', 3:'Rede', 4:'Parametrização', 5:'Informação' };
 
 // Painel Remoto (entrada de comando) - endereco REAL do ifFerConfig
 // (MSG_EX_ADDRESS_CONFIG_REM_PANEL_CTL), palavra de 16 bits com o mesmo
@@ -3676,8 +3683,8 @@ async function lerAlarmesLocal(timeoutMs){
    nenhum botão fica marcado e a nota diz o modo. */
 // Aviso sob o seletor, só fora do modo Local (no Local não há o que avisar).
 const MODO_NOTA = {
-  [MODE.REMOTO]: 'O atuador segue os comandos da rede. Abrir, Parar e Fechar pelo SIMControl só valem no modo Local.',
-  [MODE.PARA]:   'Atuador no modo Desligado. Abrir, Parar e Fechar pelo SIMControl só valem no modo Local.',
+  [MODE.REMOTO]: 'O atuador segue os comandos da rede. Os botões Abrir, Parar e Fechar só valem no modo SIMControl.',
+  [MODE.PARA]:   'Atuador no modo Desligado. Os botões Abrir, Parar e Fechar só valem no modo SIMControl.',
 };
 let modoLido = null;   // último modo lido do firmware (null = sem leitura)
 let modoPedido = null; // { modo, ate }: troca enviada, esperando a leitura confirmar
@@ -3698,7 +3705,7 @@ function renderModo(){
   const avisar = modo !== null && modo !== MODE.LOCAL;
   nota.classList.toggle('hidden', !avisar);
   $('modeHintText').textContent = !avisar ? '' : MODO_NOTA[modo]
-    || `Modo ${MODE_NAMES[modo] || modo}, definido no equipamento. Abrir, Parar e Fechar pelo SIMControl só valem no modo Local.`;
+    || `Modo ${MODE_NAMES[modo] || modo}, definido no equipamento. Os botões Abrir, Parar e Fechar só valem no modo SIMControl.`;
   nota.classList.toggle('attn', avisar);
 }
 
@@ -3798,6 +3805,10 @@ async function cmdAckAlarm(){
 // null = sensor sem leitura válida (POSICAO_INDEF): "Indefinido".
 const POSICAO_FECHADO_PCT = 0.9;
 const POSICAO_ABERTO_PCT = 99.1;
+// Margem de 0,3 % nas pontas: ali o número dá lugar à palavra (Fechado /
+// Aberto). Só na tela; o valor lido e as faixas acima não mudam.
+const POSICAO_TEXTO_FECHADO_PCT = 0.3;
+const POSICAO_TEXTO_ABERTO_PCT = 99.7;
 const DIAL_CIRC = 276.5; // 2π × 44 (raio do círculo no viewBox 104)
 const DIAL_LOCAL  = { dial:'localDial', fill:'localPosDialFill', pct:'localPosPct', caption:'localPosCaption' };
 const DIAL_REMOTO = { dial:'posDial',   fill:'posDialFill',      pct:'posPct',      caption:'posCaption' };
@@ -3807,18 +3818,27 @@ function renderPosicao(ids, percentual){
   if(percentual === null || percentual === undefined){ cat = 'indef'; legenda = 'Indefinido'; }
   else if(percentual <= POSICAO_FECHADO_PCT){ cat = 'closed'; legenda = 'Fechado'; }
   else if(percentual >= POSICAO_ABERTO_PCT){ cat = 'open'; legenda = 'Aberto'; }
+  const palavra = cat === 'indef' ? null
+    : percentual <= POSICAO_TEXTO_FECHADO_PCT ? 'Fechado'
+    : percentual >= POSICAO_TEXTO_ABERTO_PCT ? 'Aberto' : null;
   $(ids.dial).dataset.pos = cat;
   // Unidade menor e mais clara que o número, como num instrumento.
   if(cat === 'indef') $(ids.pct).textContent = '—';
+  else if(palavra) $(ids.pct).textContent = palavra;
   else $(ids.pct).replaceChildren(percentual.toFixed(1), h('span', { class:'dial-unit', text:'%' }));
+  $(ids.pct).classList.toggle('dial-word', palavra !== null);
+  // Com a palavra no lugar do número, a legenda repetiria: some.
   $(ids.caption).textContent = legenda;
+  $(ids.caption).classList.toggle('hidden', palavra !== null);
   const frac = cat === 'indef' ? 0 : Math.max(0, Math.min(100, percentual)) / 100;
   $(ids.fill).style.strokeDashoffset = String(DIAL_CIRC * (1 - frac));
 }
 function resetPosicao(ids){
   $(ids.dial).dataset.pos = 'none';
   $(ids.pct).textContent = '—';
+  $(ids.pct).classList.remove('dial-word');
   $(ids.caption).textContent = 'sem leitura';
+  $(ids.caption).classList.remove('hidden');
   $(ids.fill).style.strokeDashoffset = String(DIAL_CIRC);
 }
 

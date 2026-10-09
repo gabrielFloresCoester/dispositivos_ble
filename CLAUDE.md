@@ -71,8 +71,12 @@ manter tokens, medidas e padrões e traduzir os componentes.
   - Aba Operação, num bloco só: Posição (centralizada, cresce com a tela)
     e, ao lado, nesta ordem (2026-10-08): Abrir/Parar/Fechar, Modo de
     operação e Torque. No celular o torque vai numa faixa no pé do bloco.
-    O valor AD da posição não aparece. O aviso sob o modo só aparece fora do
-    Local. Abrir/Parar/Fechar visíveis sem rolar em notebook (janela de
+    O valor AD da posição não aparece. Nas pontas do curso (2026-10-09),
+    até 0,3 % o número dá lugar a "Fechado" e a partir de 99,7 % a
+    "Aberto", só na tela (o valor lido não muda). O aviso sob o modo só aparece fora do
+    modo SIMControl. Os modos (2026-10-09) são "SIMControl", "Rede" e
+    "Desligado" no seletor e no selo; "Via SIMControl" e "Via Interface de
+    Rede" só na dica do botão e no aviso de troca (por extenso não cabiam). Abrir/Parar/Fechar visíveis sem rolar em notebook (janela de
     ~1097×760) e no celular.
   - Aba Identificação (a última): Tag, Modelo e N/S e o nome Bluetooth
     anunciado. Saíram de Gerais, Fábrica e Parâmetros. Modelo e N/S
