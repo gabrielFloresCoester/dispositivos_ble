@@ -1,0 +1,166 @@
+/*
+ * Overlay para nRF54LM20-DK (target ns/TF-M - ver nota abaixo)
+ * Habilita a uart30 como instancia dedicada ao link com o nRF9151.
+ *
+ * NAO redefine pinctrl: nrf54lm20dk_common.dtsi (arquivo nativo do
+ * board, mantido pela Nordic) ja entrega current-speed, pinctrl-0/1 e
+ * pinctrl-names prontos para uart30 - so falta o status="okay" abaixo.
+ *
+ * ACHADO EM BANCADA (2026-08-12): a primeira versao deste overlay
+ * (copiada de exercises/uart-link) redefinia os pinos do zero e ERRAVA
+ * - usava UART_RX em P0.08, mas o pinctrl nativo do board
+ * (nrf54lm20dk_nrf54lm20_a_b-pinctrl.dtsi) diz:
+ *
+ *   group1: UART_TX = P0.06,  UART_RTS = P0.08
+ *   group2: UART_RX = P0.07,  UART_CTS = P0.09
+ *
+ * P0.08 e' RTS neste board, nao RX - a redefinicao pisava em cima do
+ * default correto do board com um pino errado (e descartava RTS/CTS
+ * de quebra, ja que so declarava TX/RX). Sintoma visto na bancada:
+ * "UART_RX_STOPPED, reason=4" (UART_ERROR_FRAMING) no lado do 91 e
+ * ACK nunca recebido no lado do 54, de forma persistente.
+ *
+ * Fio fisico: TX do 54 = P0.06, RX do 54 = P0.07 (nao P0.08).
+ *
+ * NOME DO ARQUIVO IMPORTA: o nrf54-app builda para o target
+ * nrf54lm20dk/nrf54lm20b/cpuapp/ns (TF-M), nao .../cpuapp (secure) como
+ * exercises/uart-link. O Zephyr nomeia o overlay de board pelo target
+ * INTEIRO - copiar o overlay do exercicio com o nome dele (sem "_ns")
+ * faz o Zephyr simplesmente nao carregar este arquivo, sem erro de
+ * build, e a uart30 fica desabilitada em silencio.
+ *
+ * RAIZ DA INSTABILIDADE (2026-08-13, confirmado via base de conhecimento
+ * da Nordic): a UARTE do nRF54L/H (EasyDMA) so troca de buffer de
+ * recepcao quando o timeout de inatividade expira, e reiniciar o
+ * receptor nesse instante pode perder/corromper o byte que estava na
+ * linha bem nessa hora - fica pior com latencia de interrupcao maior
+ * (exatamente o efeito do radio BLE competindo por CPU/interrupcao com
+ * scan+multiplas conexoes ativas). Sintoma batia exatamente com o
+ * relato de outro usuario na devzone da Nordic (mesmo reason=4,
+ * mesma correlacao com gaps de inatividade entre mensagens, linha
+ * fisicamente limpa no osciloscopio deles). Fix documentado: dedicar
+ * um TIMER pra contar bytes recebidos (CONFIG_UARTE_NRFX_UARTE_COUNT_
+ * BYTES_WITH_TIMER=y no prj.conf + propriedade "timer" aqui). timer20
+ * escolhido por estar livre (nada mais no projeto usa TIMER20-24).
+ */
+
+&timer20 {
+	status = "okay";
+};
+
+&uart30 {
+	status = "okay";
+	timer = <&timer20>;
+};
+
+/*
+ * I2C para o sensor de posicao (potenciometro sobre ADS1000, endereco
+ * 0x49 - ver src/position_sensor.c para o porque desse endereco vs o
+ * 0x92 do devices.h do proCo original).
+ *
+ * Sem no filho no devicetree de proposito: a leitura e crua
+ * (i2c_write_read direto no registrador de conversao), no mesmo
+ * espirito do exercicio validado em bancada (ncs-fund l6_e1) - evita
+ * depender de um binding/driver Zephyr formal que nunca foi validado
+ * (ver l7_e1, com o mesmo bug de nome de overlay descrito acima para a
+ * uart30).
+ *
+ * i2c21 nao vem com pinctrl pronto no dtsi nativo do board (diferente
+ * da uart30) - por isso, ao contrario do bloco acima, aqui precisamos
+ * declarar o grupo de pinos do zero.
+ */
+&i2c21 {
+	status = "okay";
+	pinctrl-0 = <&i2c21_default>;
+	pinctrl-1 = <&i2c21_sleep>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+};
+
+&pinctrl {
+	/omit-if-no-ref/ i2c21_default: i2c21_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SCL, 1, 11)>,
+				    <NRF_PSEL(TWIM_SDA, 1, 12)>;
+			bias-pull-up;
+		};
+	};
+	/omit-if-no-ref/ i2c21_sleep: i2c21_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SCL, 1, 11)>,
+				    <NRF_PSEL(TWIM_SDA, 1, 12)>;
+			bias-pull-up;
+		};
+	};
+};
+
+/*
+ * Saida digital de acionamento do motor (papel atuador) - ver
+ * src/actuator_motor.c. Diferente do fwBLE original (BLE/Atuador/foSeAc.c,
+ * que monta uma mensagem proxiada por I2C pra uma placa FSA separada -
+ * proCo/devices/devs/dev_fsa.c): o SIM Connect e' hardware unificado numa
+ * placa so', sem FSA, entao o motor e' acionado direto por 2 pinos GPIO
+ * do proprio nRF54 (decisao com o Felipe, 2026-09-04 - ver memoria de
+ * projeto "sim-connect-command-control-port-strategy").
+ *
+ * P1.30 = abre, P1.31 = fecha - escolhidos em bancada, PROVISORIOS ate o
+ * esquematico definitivo do circuito de acionamento existir. Trocar so'
+ * os numeros de pino abaixo quando isso acontecer.
+ *
+ * GPIO_ACTIVE_HIGH e' um chute inicial (sem circuito de acionamento real
+ * ainda pra confirmar a polaridade) - trocar pra GPIO_ACTIVE_LOW aqui se
+ * o driver de motor real (rele/ponte H) for acionado em nivel baixo.
+ *
+ * Nao ha binding dedicado pra isto - reusa o node especial "zephyr,user"
+ * (padrao do Zephyr pra GPIOs de projeto sem um binding proprio), lido em
+ * actuator_motor.c via GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), ..._gpios).
+ */
+/ {
+	zephyr,user {
+		motor-abre-gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>;
+		motor-fecha-gpios = <&gpio1 31 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+/* Watchdog (ver src/watchdog.c). WDT31 e' o unico WDT acessivel do lado
+ * non-secure no nRF54LM20 com TF-M (WDT30 e' so' secure) - ja' e' o alias
+ * watchdog0 do DK, so' vem desabilitado no dtsi.
+ */
+&wdt31 {
+	status = "okay";
+};
+
+/* Flash SPI externa - MX25R6435F (8 MB) do DK, no spi00 (pinos nativos do
+ * board: SCK P2.1, MOSI P2.2, MISO P2.4, CS P2.5, reset P2.0). Decisao
+ * (2026-10-06): a placa do SIM Connect usa este mesmo chip (ou outra NOR
+ * SPI compativel - o driver jedec,spi-nor le os parametros do proprio
+ * chip, entao trocar e' so' devicetree). Vem desabilitada no dtsi do board.
+ *
+ * Uma area fixa por uso, pra um nao invadir o outro:
+ *   0x000000-0x17FFFF (1,5 MB) reservado pro FOTA (slot secundario do
+ *                     MCUboot, do tamanho do slot de imagem - o valor
+ *                     final sai quando o MCUboot entrar; NAO usar)
+ *   0x180000-0x27FFFF (1 MB)   registro de eventos (src/actuator_regevent.c,
+ *                     65536 eventos de 16 bytes)
+ *   0x280000-0x7FFFFF (5,5 MB) livre (curvas de torque, futuro)
+ * Parametros continuam na RRAM interna (ZMS) - ver docs/REGISTRO_EVENTOS.md.
+ */
+&mx25r64 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		fota_reserved_partition: partition@0 {
+			label = "fota-reserved";
+			reg = <0x00000000 0x00180000>;
+		};
+
+		event_log_partition: partition@180000 {
+			label = "event-log";
+			reg = <0x00180000 0x00100000>;
+		};
+	};
+};

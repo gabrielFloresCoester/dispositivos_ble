@@ -1,0 +1,7 @@
+{
+    "nrf-connect.applications": [
+        "${workspaceFolder}\\nrf54-app",
+        "${workspaceFolder}\\exercises\\uart-link",
+        "${workspaceFolder}\\nrf91-app"
+    ]
+}

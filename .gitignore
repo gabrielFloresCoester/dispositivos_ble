@@ -1,0 +1,5 @@
+build/
+/_scratch_at_client_build
+/nrf54-app/build_test
+/build_test
+.mcp.json

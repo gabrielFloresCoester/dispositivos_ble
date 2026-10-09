@@ -1,0 +1,36 @@
+#
+# Coester - SIM Connect (nRF9151)
+#
+
+menu "SIM Connect - MQTT"
+
+config SIMCONNECT_MQTT_TOPIC_PREFIX
+	string "Prefixo dos topicos MQTT"
+	default "topicGDF"
+	help
+	  Prefixo comum de todos os topicos, publicacao e assinatura -
+	  ver docs/PROTOCOLO_91_MQTT.md. Nome simples escolhido pra
+	  facilitar achar o proprio trafego num broker compartilhado
+	  (sandbox de curso); trocar aqui quando houver mais de um
+	  Gateway publicando no mesmo broker (nesse caso, algo derivado
+	  do client ID/IMEI, unico por unidade, faz mais sentido).
+
+config SIMCONNECT_MQTT_BROKER_HOSTNAME
+	string "Hostname do broker MQTT"
+	default "mqtt.nordicsemi.academy"
+	help
+	  Broker de desenvolvimento (Nordic Academy, sandbox de curso,
+	  compartilhado com outros alunos - nao serve pra dado de campo
+	  real). Trocar por um broker de producao e' so mudar esta
+	  string, sem tocar na logica de topicos/payload.
+
+config SIMCONNECT_MQTT_CLIENT_ID
+	string "MQTT Client ID"
+	help
+	  Client ID customizado da conexao MQTT (identidade de sessao no
+	  broker - separado do prefixo de topico acima). Se vazio,
+	  gerado a partir do IMEI (nrf-<IMEI>).
+
+endmenu
+
+source "Kconfig.zephyr"

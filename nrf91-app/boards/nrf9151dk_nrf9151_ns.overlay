@@ -1,0 +1,46 @@
+/*
+ * Overlay para nRF9151-SMA-DK
+ * Habilita a uart1 (alias arduino_serial), roteada para os pinos
+ * D0 (RX) / D1 (TX) do header estilo Arduino, dedicada ao link
+ * com a nRF54LM20-DK.
+ *
+ * A definicao de pinctrl para uart1 (uart1_default / uart1_sleep) ja
+ * vem pronta no devicetree base da board -- normalmente NAO e' preciso
+ * redefinir os psels aqui, so garantir que o node esta habilitado e
+ * configurado sem hardware flow control (RTS/CTS), ja que vamos usar
+ * so 3 fios: TX, RX, GND.
+ *
+ * ACHADO NA MIGRACAO PRO NCS 3.4.0 (2026-08-14): o layout de particao
+ * padrao do nRF91 (nrf91xx_partition.dtsi) passou a reservar um
+ * boot_partition no endereco 0 pra um bootloader (MCUboot) - que este
+ * projeto nunca usou. Sem MCUboot pra pular do endereco 0 pro slot
+ * real da imagem, o chip tenta executar a boot_partition vazia e trava
+ * em silencio: build e flash sem erro, mas nenhum log aparece, nem o
+ * banner de boot (confirmado em bancada - erase/recover nao ajuda,
+ * nao e' dado velho, e' layout de memoria incompativel). Mesmo
+ * sintoma relatado por outro usuario na devzone da Nordic, confirmado
+ * pela propria Nordic como problema conhecido da migracao. So afeta o
+ * nRF91 (o layout do nRF54 nao tem essa reserva) - por isso so o 91
+ * ficava mudo, o 54 sempre bootou normal.
+ *
+ * Fix oficial (docs/app_dev/device_guides/nrf91/nrf91_dt_partitions.html):
+ * incluir o layout de particao pronto pra TF-M sem bootloader.
+ *
+ * Variante "crypto" (nao "no_bootloader"): a variante minima
+ * (nrf91_no_bootloader_partitions.dtsi) faz /delete-node/ nas
+ * particoes de Protected Storage/ITS/OTP do TF-M - mas o Kconfig
+ * padrao deste board target ja habilita CONFIG_TFM_PARTITION_
+ * PROTECTED_STORAGE, e sem essa particao o build do TF-M falha
+ * ("TFM_HAL_PS_FLASH_AREA_ADDR must be defined"). A variante crypto
+ * mantem PS/ITS/OTP intactos, so redefine o layout do app.
+ */
+#include <samples/cellular/nrf91_crypto_partitions.dtsi>
+#include <samples/cellular/nrf91_sram_crypto_partitions.dtsi>
+
+&uart1 {
+	status = "okay";
+	current-speed = <115200>;
+	/* Sem RTS/CTS: se o board file base tiver hw-flow-control
+	 * habilitado, remova a linha correspondente aqui: */
+	/delete-property/ hw-flow-control;
+};

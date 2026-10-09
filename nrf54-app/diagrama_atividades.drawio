@@ -1,0 +1,735 @@
+<mxfile host="app.diagrams.net" agent="Claude Code" version="24.7.0" type="device">
+  <diagram id="legend" name="0 - Legenda">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="lg_title" value="Coester - SIM Connect (Gateway) - Diagrama de Atividades" style="text;html=1;fontStyle=1;fontSize=20;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="700" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_sub" value="nrf54-app/src/main.c + actuator_client.c + my_lbs.c - Zephyr / nRF Connect SDK 3.3.0" style="text;html=1;fontSize=12;fontColor=#666666;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="68" width="700" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lg_main_box" value="Main Thread" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="130" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_main_desc" value="Thread principal: sequencia de boot (main()) e o loop infinito que pisca o LED de status. So roda uma vez cada init; depois so o blink." style="text;html=1;fontSize=11;whiteSpace=wrap;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="320" y="130" width="620" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lg_btrx_box" value="BT RX Thread (host Bluetooth)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="200" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_btrx_desc" value="Thread do host Zephyr que processa eventos HCI recebidos do controlador: callbacks de conexao (bt_conn_cb), scan (bt_scan / bt_le_scan_cb), leitura/escrita GATT do lado servidor (my_lbs.c) e notificacoes/discovery do lado cliente (actuator_client.c). E onde a maior parte da logica do Gateway roda de fato." style="text;html=1;fontSize=11;whiteSpace=wrap;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="320" y="200" width="620" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lg_sys_box" value="System Workqueue" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_sys_desc" value="Thread separada (CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE) usada para trabalho que nao pode rodar direto na BT RX thread: religar advertising com retentativa/backoff, gravar a allow-list em flash (bloqueia), e trocar parametros de conexao (que o controlador rejeita logo apos conectar)." style="text;html=1;fontSize=11;whiteSpace=wrap;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="320" y="280" width="620" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lg_dec_box" value="Decisao" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="370" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_dec_desc" value="Verificacoes de baixo nivel (validacao de tamanho de escrita GATT, etc.) foram dobradas dentro do proprio node de atividade, entre parenteses, em vez de virar um losango a parte - para o diagrama nao virar um mar de losangos triviais." style="text;html=1;fontSize=11;whiteSpace=wrap;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="320" y="370" width="620" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lg_term_box" value="Inicio / Fim" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="450" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_term_desc" value="Circulo preto = inicio de um fluxo (entrada por callback do stack BT/Zephyr, ou main()). 'Fim' aqui normalmente significa 'devolve o controle pra quem chamou' (ex.: volta pro host BT), nao que a thread morre." style="text;html=1;fontSize=11;whiteSpace=wrap;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="320" y="450" width="620" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lg_note_box" value="Nota / observacao de arquitetura" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;size=14;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="530" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_note_desc" value="Caixas com essa dobra no canto sao comentarios extraidos direto do codigo-fonte (racional de design), nao um passo executavel." style="text;html=1;fontSize=11;whiteSpace=wrap;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="320" y="530" width="620" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lg_pages" value="Paginas (abas la embaixo):&#10;1 - Boot e Inicializacao (main)&#10;2 - Peripheral: advertising e conexao da interface&#10;3 - Central: scan, conexao e discovery de um atuador&#10;4 - Runtime: comandos GATT da interface, relay de dados do atuador, persistencia da allow-list" style="text;html=1;fontSize=12;whiteSpace=wrap;align=left;verticalAlign=top;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="500" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_omit" value="Omitidos do diagrama (helpers puros, sem ramo de decisao relevante): slot_index(), find_by_addr(), find_free_slot(), fill_status_rec(), fill_discovery_rec(), set_name_field(), extract_adv_name()/name_extract_cb(), discovery_queue_push()/pop(), discovery_slot_for_new(), discovery_find(). Ficam citados entre parenteses onde chamados." style="text;html=1;fontSize=11;whiteSpace=wrap;align=left;verticalAlign=top;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="560" y="620" width="440" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_removed" value="lbs_client.c / lbs_client.h foram removidos do projeto (codigo morto dos Kits B/C aposentados, nao entrava no build) e por isso nao aparecem aqui." style="text;html=1;fontSize=11;whiteSpace=wrap;align=left;verticalAlign=top;fontColor=#666666;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="740" width="960" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="page1boot" name="1 - Boot e Inicializacao">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="1700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="b_lane" value="Main Thread - main()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="20" width="320" height="1620" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b1" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="340" y="60" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" value="dk_leds_init()&lt;br&gt;(err &#8594; LOG_ERR + return -1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="130" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" value="bt_enable(NULL)&lt;br&gt;(chamada sincrona - stack pronta ao retornar; err &#8594; LOG_ERR + return -1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="240" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="b4" value="bt_conn_cb_register(&amp;connection_callbacks)&lt;br&gt;bt_gatt_cb_register(&amp;gatt_callbacks)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="360" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b5" value="my_lbs_init(&amp;phone_facing_callbacks)&lt;br&gt;(err &#8594; LOG_ERR + return -1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="470" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b6" value="actuator_manager_init(&amp;actuator_callbacks)&lt;br&gt;(zera slots[] e discovered[], guarda callbacks; err &#8594; return -1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="580" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="b7" value="settings_subsys_init()&lt;br&gt;(err so loga - allow-list nao sobrevive a reboot, nao e fatal)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="700" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="b8" value="settings_load()&lt;br&gt;para cada entrada gravada, allowlist_settings_set() chama actuator_manager_add() (slot &#8594; WAITING) - ainda sem chamar scan_start()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="820" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b9" value="scan_init()&lt;br&gt;bt_scan_init() + bt_scan_filter_add(UUID do servico do atuador) + habilita filtro" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="950" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="b10" value="bt_le_scan_cb_register(&amp;scan_recv_callbacks)&lt;br&gt;(callback que ve TODO pacote, sem filtro - ver Pagina 3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1070" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="b11" value="k_work_init_delayable(&amp;adv_work, adv_work_handler)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1190" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b12" value="advertising_start()&lt;br&gt;k_work_schedule(&amp;adv_work, K_NO_WAIT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1300" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b13" value="&#8594; continua na Pagina 2&#10;(adv_work roda na System Workqueue)" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#82b366;align=left;" vertex="1" parent="1">
+          <mxGeometry x="540" y="1310" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="b14" value="loop infinito:&lt;br&gt;dk_set_led(RUN_STATUS_LED, blink)&lt;br&gt;k_sleep(1000 ms)&lt;br&gt;(thread Main fica aqui pro resto da execucao)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1400" width="280" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="be1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b2" target="b3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b3" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b4" target="b5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b5" target="b6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be6" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b6" target="b7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be7" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b7" target="b8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be8" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b8" target="b9"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be9" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b9" target="b10"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be10" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b10" target="b11"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be11" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b11" target="b12"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be12" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="b12" target="b13"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be13" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b12" target="b14"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be14" value="repete pra sempre" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=1;entryY=0.9;" edge="1" parent="1" source="b14" target="b14"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="560" y="1445" /></Array></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="page2periph" name="2 - Peripheral (Advertising)">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="p_lane_sys" value="System Workqueue - adv_work_handler()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="360" height="1160" as="geometry" />
+        </mxCell>
+        <mxCell id="p_lane_btrx" value="BT RX Thread - callbacks de conexao (bt_conn_cb)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="20" width="700" height="1160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1" value="advertising_start()&lt;br&gt;chamado do boot (Pag.1), de recycled_cb() (nesta pagina) ou reagendado pelo proprio backoff" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="70" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="phone_conn != NULL ?&lt;br&gt;(interface ja conectada?)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="190" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p2end" value="return&lt;br&gt;(sem tentar advertising -&#10;so ha 1 papel Peripheral no controlador,&#10;CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT=1,&#10;e ja esta ocupado)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="330" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="bt_scan_stop()&lt;br&gt;(controlador recusa reconfigurar endereco aleatorio com o scan ativo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="460" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="bt_le_adv_start(adv_param, ad, sd)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="560" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p5" value="err ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="650" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p5a" value="-ENOMEM (status HCI 0x0d):&lt;br&gt;log WARN + calcula backoff (300ms..2000ms) + k_work_reschedule(adv_work, delay)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="770" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p5b" value="-EALREADY:&lt;br&gt;log DBG (ja estava advertising - provavelmente reciclagem de ATUADOR, nao da interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="770" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p5c" value="outro erro:&lt;br&gt;log ERR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="420" y="770" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p5d" value="sucesso (0):&lt;br&gt;log INF (advertising iniciado)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="770" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p6" value="scan_start()&lt;br&gt;bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE)&lt;br&gt;(chamado nos 4 casos acima)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="900" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p6end" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#ffffff;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="205" y="1000" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b1c" value="on_connected(conn, err)&lt;br&gt;(vem tambem de conexoes com atuadores - ver Pagina 3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="70" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="b2c" value="err != 0 ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="510" y="170" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b2cend" value="log ERR&#10;scan_start()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="770" y="185" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b3c" value="role == PERIPHERAL ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="510" y="290" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b3ca" value="sim: phone_conn = conn&lt;br&gt;my_lbs_set_phone_conn(conn)&lt;br&gt;dk_set_led_on(CON_STATUS_LED_PHONE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="410" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b3cb" value="nao (CENTRAL):&#10;&#8594; ver Pagina 3&#10;(fluxo do atuador)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="770" y="410" width="220" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b4c" value="on_disconnected(conn, reason)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="540" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="b5c" value="role == PERIPHERAL ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="510" y="630" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b5ca" value="sim: phone_conn = NULL&lt;br&gt;my_lbs_set_phone_conn(NULL)&lt;br&gt;dk_set_led_off(CON_STATUS_LED_PHONE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="750" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b5note" value="NAO chama advertising_start() aqui de proposito: a conexao ainda nao foi liberada neste ponto (so quando .recycled disparar). Tentar antes falha com -ENOMEM." style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;size=14;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="850" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b5cb" value="nao (CENTRAL):&lt;br&gt;actuator_manager_owns_conn(conn)?&lt;br&gt;sim &#8594; ver Pagina 3&lt;br&gt;(actuator_manager_conn_lost)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="800" y="750" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="b5cc" value="scan_start()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="650" y="960" width="260" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="b6c" value="recycled_cb()&lt;br&gt;disparado p/ QUALQUER conexao reciclada (o callback nao recebe qual conn foi - nao so a da interface!)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="1050" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pe1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p1" target="p2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe2" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p2" target="p2end"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe3" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p2" target="p3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p3" target="p4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p4" target="p5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe6" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p5" target="p5a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe7" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p5" target="p5b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe8" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p5" target="p5c"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe9" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p5" target="p5d"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe10" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p5a" target="p6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe11" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p5b" target="p6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe12" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p5c" target="p6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe13" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p5d" target="p6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe14" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p6" target="p6end"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="be15" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b1c" target="b2c"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be16" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b2c" target="b2cend"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be17" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b2c" target="b3c"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be18" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b3c" target="b3ca"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be19" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b3c" target="b3cb"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="be20" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b4c" target="b5c"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be21" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b5c" target="b5ca"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be22" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="b5ca" target="b5note"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be23" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b5c" target="b5cb"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="be24" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b5cb" target="b5cc"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="be25" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="b6c" target="p1" exitX="0" exitY="0.5" entryX="1" entryY="0.5"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="page3central" name="3 - Central (Scan-Conexao-Discovery)">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="2600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="c_lane_btrx" value="BT RX Thread - scan, conexao Central e discovery (actuator_client.c)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="820" height="2350" as="geometry" />
+        </mxCell>
+        <mxCell id="c_lane_sys" value="System Workqueue - velocidade do enlace" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="900" y="20" width="340" height="2350" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c1" value="scan_recv_cb(info, buf)&lt;br&gt;roda p/ TODO pacote de advertising recebido (com ou sem filtro de UUID)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="70" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="extract_adv_name(buf) &#8594; nome&lt;br&gt;nome vazio?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="170" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="nao vazio: actuator_manager_name_seen(addr, nome)&lt;br&gt;so atualiza cache/slot ja existente, NUNCA cria entrada nova" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="280" width="300" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c4" value="scan_filter_match(device_info, ...)&lt;br&gt;so pacotes que batem o filtro de UUID do servico do atuador" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="410" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" value="actuator_manager_seen(addr, rssi, nome)&lt;br&gt;atualiza cache de descoberta; notifica interface se RSSI mudou muito ou nome mudou" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="510" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" value="actuator_manager_is_wanted(addr) ?&lt;br&gt;(esta na allow-list?)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="620" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c6end" value="return&lt;br&gt;(descoberta passiva - nao conecta em quem nao foi adicionado)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="430" y="635" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" value="bt_scan_stop()&lt;br&gt;bt_conn_le_create(addr)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="760" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" value="err ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="860" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c8a" value="sim: log ERR + scan_start()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="330" y="875" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c8b" value="nao: bt_conn_unref(conn)&lt;br&gt;(conexao em andamento - aguarda on_connected)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="970" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c9" value="scan_connecting_error()&lt;br&gt;log ERR + scan_start()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1080" width="300" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c10" value="on_connected(conn, err=0, role=CENTRAL)&lt;br&gt;(vindo da Pagina 2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1170" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" value="actuator_manager_is_wanted(dst) ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1270" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c11a" value="nao: log + bt_conn_disconnect(conn)&lt;br&gt;(removido da allow-list enquanto conectava)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="410" y="1285" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c11b" value="sim: actuator_manager_start(conn, dst)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1390" width="300" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c12" value="slot-&gt;conn = conn&lt;br&gt;slot_set_state(CONNECTED)&lt;br&gt;(notify_slot_status &#8594; interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1490" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" value="discovery_busy ?&lt;br&gt;(so 1 descoberta por vez - limitacao do bt_gatt_dm)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1600" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c13a" value="sim: discovery_queue_push(slot)&lt;br&gt;aguarda a vez" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="410" y="1615" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" value="discovery_start_for_slot(slot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1730" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" value="discovery_busy = true&lt;br&gt;bt_gatt_dm_start(conn, UUID_SERVICE, cb, slot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1830" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" value="err ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="1930" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c16a" value="sim: log ERR&lt;br&gt;slot_enter_error(slot)&lt;br&gt;discovery_busy = false" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1935" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c16b" value="nao: fim (aguarda callback assincrono do bt_gatt_dm quando a resposta ATT chegar - mesma thread BT RX)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2040" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c16note" value="bt_gatt_dm encadeia os passos (servico &#8594; caracteristicas &#8594; descritores) resubmetendo trabalho na System Workqueue internamente; cada resposta ATT volta pra esta mesma BT RX thread." style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;size=14;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="410" y="2040" width="260" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c17" value="discovery_complete(dm, slot)&lt;br&gt;extrai handles RX/TX/TX_CCC + bt_gatt_dm_data_release(dm)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2150" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" value="servico == UUID esperado E RX/TX/TX_CCC todos encontrados ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="2260" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c18a" value="nao: log ERR&lt;br&gt;slot_enter_error(slot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="410" y="2275" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c19" value="discovery_service_not_found(conn, slot)&lt;br&gt;log WARN + slot_enter_error(slot)&lt;br&gt;(callback separada do bt_gatt_dm quando nenhum servico bate)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="410" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c20" value="discovery_error(conn, err, slot)&lt;br&gt;log ERR + slot_enter_error(slot)&lt;br&gt;(callback separada do bt_gatt_dm em erro de discovery)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="530" width="260" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c21" value="subscribe_tx(slot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2400" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c22" value="ja assinado (tx_sub_active) ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="700" y="70" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c22a" value="sim: return -EALREADY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="85" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" value="nao: bt_gatt_subscribe(conn, tx_sub_params)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="180" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c24" value="err ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="750" y="270" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c24a" value="sim: log ERR&lt;br&gt;slot_enter_error(slot)&lt;br&gt;return err" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="980" y="270" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c25" value="nao: slot_set_state(READY)&lt;br&gt;(notify_slot_status; liga LED3 via update_actuator_led/count_ready)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="390" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c26" value="bt_conn_le_phy_update(2M)&lt;br&gt;best-effort - so loga se falhar, segue em 1M" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="500" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c27" value="speed = LENTO&lt;br&gt;k_work_reschedule(param_work, 1000ms)&lt;br&gt;(controlador rejeita update logo apos conectar)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="600" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c28" value="discovery_advance_queue()&lt;br&gt;discovery_busy = false" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1400" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c29" value="discovery_queue_pop() &#8594; fila vazia ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1500" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c29end" value="fim" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="1520" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c30" value="nao vazia: slot ainda tem conn ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1610" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="c30note" value="nao: atuador desconectou enquanto esperava na fila - pula pro proximo (volta ao pop)" style="text;html=1;fontSize=9;fontStyle=2;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1615" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c31" value="actuator_manager_conn_lost(conn)&lt;br&gt;(vindo da Pagina 2 - on_disconnected, role Central)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2560" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p3_sys1" value="param_work_handler(slot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="930" y="720" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_sys2" value="slot-&gt;conn ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="970" y="820" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_sys3" value="sim: bt_conn_le_param_update(LENTO ou RAPIDO conforme slot-&gt;speed) + log INF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="920" width="280" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p3_sys4" value="fast_timeout_handler(slot)&lt;br&gt;agendado por actuator_manager_set_speed() quando modo=RAPIDO (cancelado se voltar a LENTO antes)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="1050" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_sys5" value="speed ainda == RAPIDO ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="970" y="1170" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p3_sys6" value="sim: log WARN (sem confirmacao em N segundos - interface caiu no meio de uma coleta?)&lt;br&gt;speed = LENTO&lt;br&gt;k_work_reschedule(param_work)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="1280" width="280" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ce1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c1" target="c2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce2" value="nao vazio" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c2" target="c3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c3" target="c4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce3b" value="(paralelo,&#10;mesmo pacote)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="c1" target="c4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c4" target="c5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c5" target="c6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce6" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c6" target="c6end"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce7" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c6" target="c7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce8" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c7" target="c8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce9" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c8" target="c8a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce10" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c8" target="c8b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce11" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c8b" target="c9"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce12" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c9" target="c10"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce13" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c10" target="c11"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce14" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c11" target="c11a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce15" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c11" target="c11b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce16" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c11b" target="c12"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce17" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c12" target="c13"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce18" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c13" target="c13a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce19" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c13" target="c14"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce20" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c14" target="c15"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce21" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c15" target="c16"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce22" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c16" target="c16a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce23" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c16a" target="c28"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce24" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c16" target="c16b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce24b" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="c16b" target="c16note"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce25" value="(resposta ATT chega)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="c16b" target="c17"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce26" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c17" target="c18"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce27" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c18" target="c18a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce28" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c18a" target="c28"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce29" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c18" target="c21"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ce30" value="(callback do bt_gatt_dm)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="c15" target="c19" exitX="1" exitY="0.3" entryX="0" entryY="0.5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce31" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c19" target="c28" exitX="1" exitY="0.5" entryX="1" entryY="0.1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1080" y="455" /><mxPoint x="1080" y="1435" /></Array></mxGeometry></mxCell>
+        <mxCell id="ce32" value="(callback do bt_gatt_dm)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="c15" target="c20" exitX="1" exitY="0.5" entryX="0" entryY="0.5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce33" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c20" target="c28" exitX="1" exitY="0.5" entryX="1" entryY="0.2"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1100" y="575" /><mxPoint x="1100" y="1420" /></Array></mxGeometry></mxCell>
+
+        <mxCell id="ce34" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c21" target="c22" exitX="1" exitY="0.5" entryX="0" entryY="0.5"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="650" y="2430" /><mxPoint x="650" y="110" /></Array></mxGeometry></mxCell>
+        <mxCell id="ce35" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c22" target="c22a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce36" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c22" target="c23"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce37" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c23" target="c24"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce38" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c24" target="c24a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce39" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c24" target="c25"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce40" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c25" target="c26"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce41" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c26" target="c27"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce42" value="k_work_reschedule&#10;(System WQ)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="c27" target="p3_sys1" exitX="1" exitY="0.5" entryX="0" entryY="0.5"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="ce43" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c28" target="c29"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce44" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c29" target="c29end"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce45" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c29" target="c30"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ce46" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c30" target="c14" exitX="0" exitY="0.5" entryX="1" entryY="0.9"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="200" y="1655" /></Array></mxGeometry></mxCell>
+        <mxCell id="ce47" value="nao (pula)" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c30" target="c29" exitX="1" exitY="0.3" entryX="1" entryY="0.7"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="700" y="1650" /><mxPoint x="700" y="1580" /></Array></mxGeometry></mxCell>
+
+        <mxCell id="ce48" value="k_work_cancel_delayable&#10;(param_work / fast_timeout_work)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="c31" target="p3_sys1" exitX="1" exitY="0.5" entryX="0" entryY="0.9"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="880" y="2595" /></Array></mxGeometry></mxCell>
+
+        <mxCell id="pe_sys1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p3_sys1" target="p3_sys2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_sys2" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p3_sys2" target="p3_sys3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_sys3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p3_sys4" target="p3_sys5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_sys4" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p3_sys5" target="p3_sys6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="pe_sys5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="p3_sys6" target="p3_sys1" exitX="0" exitY="0.5" entryX="0" entryY="0.9"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="900" y="1330" /><mxPoint x="900" y="740" /></Array></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="page4runtime" name="4 - Runtime (Comandos e Dados)">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="3400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="r_lane_btrx" value="BT RX Thread - GATT server (my_lbs.c) e GATT client / callbacks (actuator_client.c, main.c)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="820" height="3150" as="geometry" />
+        </mxCell>
+        <mxCell id="r_lane_sys" value="System Workqueue - persistencia" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="900" y="20" width="340" height="400" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r1" value="write_led(buf) [LED, UUID ...1525]&lt;br&gt;(valida len==1 e offset==0, senao erro ATT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="70" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" value="app_led_cb(state)&lt;br&gt;stub - nao faz nada (herdado do exercicio original)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="70" y="170" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" value="read_button() [Button, UUID ...1524]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="260" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" value="app_button_cb() stub (sempre false) &#8594; bt_gatt_attr_read()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="70" y="330" width="300" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r5" value="write_actuator_cmd(buf, len) [Actuator Command, UUID ...1528]&lt;br&gt;(valida len&#8805;2, senao erro ATT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="430" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r6" value="app_actuator_cmd_cb(slot, data, len)&lt;br&gt;loga aviso se notify Raw Data OFF, mas segue mesmo assim" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="530" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r7" value="actuator_manager_send_to(slot, data, len)&lt;br&gt;valida slot READY + conn + rx_handle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="630" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r8" value="resultado ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="730" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r8a" value="-ENOTCONN: log WARN (nao esta PRONTO)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="330" y="700" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r8b" value="outro erro: log WARN (falha ao repassar)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="330" y="770" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r8c" value="ok: bt_gatt_write_without_response() + log INF/hexdump" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="330" y="840" width="170" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r9" value="write_actuator_manage(buf, len=8) [Actuator Manage, UUID ...1529]&lt;br&gt;(valida len==8 e addr_type public/random, senao erro ATT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="930" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r10" value="app_actuator_manage_cb(cmd, addr)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1040" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r11" value="cmd == 0x01 ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="1120" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r12" value="sim: actuator_manager_add(addr)&lt;br&gt;ja existe&#8594;ok; sem slot livre&#8594;-ENOMEM; senao copia addr+nome(cache), WAITING, allowlist_save()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1240" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="r12a" value="err? nao &#8594; log INF + scan_start() | sim &#8594; log WARN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1350" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r13" value="nao (0x00 ou qualquer outro valor): actuator_manager_remove(addr)&lt;br&gt;EMPTY antes de desconectar (conn_lost() sabe que foi remocao explicita); allowlist_save()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="410" y="1240" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="r13a" value="err? nao &#8594; log INF | sim &#8594; log WARN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="410" y="1350" width="300" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r14" value="write_gateway_ctrl(buf, len) [Gateway Ctrl, UUID ...152c]&lt;br&gt;(valida len&#8805;1, senao erro ATT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1450" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r15" value="app_gateway_ctrl_cb(cmd, arg, len) &#8594; cmd ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1550" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="r15a" value="0x01 CLEAR_DISCOVERY:&lt;br&gt;actuator_manager_clear_discovery()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1680" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r15b" value="0x02 RESTART_SCAN:&lt;br&gt;bt_scan_stop() + scan_start()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="250" y="1680" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r15c" value="0x03 DISCONNECT_SLOT:&lt;br&gt;actuator_manager_disconnect(slot)&lt;br&gt;(arg vazio &#8594; log WARN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1680" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r15d" value="0x04 SET_SPEED:&lt;br&gt;actuator_manager_set_speed(slot, FAST/SLOW)&lt;br&gt;agenda param_work + fast_timeout_work (Pagina 3, System WQ)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="630" y="1670" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="r15e" value="default: log WARN (comando desconhecido)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1760" width="170" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r16" value="read_actuator_status(buf, len, offset)&lt;br&gt;[Actuator Status - READ, UUID ...152a]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1860" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r17" value="app_status_read_cb() &#8594; actuator_manager_get_status_all() (1 registro por slot) &#8594; bt_gatt_attr_read() (Read Blob automatico se passar do MTU)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="70" y="1940" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="r18" value="read_discovery(buf, len, offset)&lt;br&gt;[Discovered Actuators - READ, UUID ...152b]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2060" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r19" value="app_discovery_read_cb() &#8594; actuator_manager_get_discovery_all() &#8594; bt_gatt_attr_read()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="70" y="2140" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r20" value="tx_notify_func(conn, params, data, length)&lt;br&gt;[TX do atuador - notify GATT client]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="70" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r21" value="data == NULL ? (unsubscribed)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="160" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r21a" value="sim: tx_sub_active = false" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="750" y="175" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r22" value="nao: actuator_raw_data_cb(slot, data, len)&lt;br&gt;log INF + hexdump" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="280" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r23" value="my_lbs_send_actuator_raw_data(slot, data, len)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="380" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r24" value="notify assinado E cabe no MTU negociado ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="470" width="240" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="r24a" value="notify OFF: return -EACCES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="750" y="440" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="r24b" value="MTU insuficiente: log ERR + return -EMSGSIZE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="750" y="500" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r24c" value="ok: bt_gatt_notify() [Actuator Raw Data] (trunca se &gt;244 bytes)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="750" y="580" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r25" value="notify_slot_status(slot)&lt;br&gt;chamado por slot_set_state() em QUALQUER mudanca de estado, e por mudanca de nome" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="680" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r26" value="fill_status_rec() &#8594; actuator_status_cb(rec, len) [main.c]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="790" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r27" value="update_actuator_led()&lt;br&gt;conta slots READY (actuator_manager_count_ready), liga/desliga LED3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="880" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r28" value="my_lbs_send_actuator_status(rec, len)&lt;br&gt;bt_gatt_notify [Actuator Status]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="980" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r29" value="err e != -EACCES ?&lt;br&gt;(-EACCES e normal: ninguem com a interface aberta agora)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="470" y="1070" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r29a" value="sim: log WARN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="750" y="1085" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r30" value="actuator_discovery_cb(rec, len)&lt;br&gt;chamado por actuator_manager_seen()/name_seen() quando ha novidade relevante" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1180" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r31" value="my_lbs_send_discovery(rec, len)&lt;br&gt;bt_gatt_notify [Discovered Actuators]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1290" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="r32" value="err e != -EACCES ? sim &#8594; log WARN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1380" width="300" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="r33" value="att_mtu_updated(conn, tx, rx)&lt;br&gt;[bt_gatt_cb] &#8594; log INF (payload util = min(tx,rx)-3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1470" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rs1" value="allowlist_save_work()&lt;br&gt;chamado por allowlist_save() via k_work_submit - grava em flash bloqueia, entao nao pode rodar direto na BT RX thread" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="70" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="rs2" value="monta buffer: 1 byte tipo + 6 bytes MAC por atuador ocupado (state != EMPTY)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="180" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="rs3" value="settings_save_one(&quot;coe/al&quot;, buf, n)&lt;br&gt;persistencia ZMS (nRF54)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="270" width="280" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rs4" value="log INF (ok) ou log ERR (falhou)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="350" width="280" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="re1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r1" target="r2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r3" target="r4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r5" target="r6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r6" target="r7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r7" target="r8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re6" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r8" target="r8a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re7" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r8" target="r8b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re8" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r8" target="r8c"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re9" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r9" target="r10"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re10" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r10" target="r11"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re11" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r11" target="r12"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re12" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r12" target="r12a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re13" value="allowlist_save()" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="r12" target="rs1" exitX="1" exitY="0.5" entryX="0" entryY="0.9"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="880" y="1285" /></Array></mxGeometry></mxCell>
+        <mxCell id="re14" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r11" target="r13"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re15" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r13" target="r13a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re16" value="allowlist_save()" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="r13" target="rs1" exitX="1" exitY="0.5" entryX="1" entryY="0.9"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1200" y="1285" /><mxPoint x="1200" y="115" /></Array></mxGeometry></mxCell>
+        <mxCell id="re17" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r14" target="r15"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re18" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r15" target="r15a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re19" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r15" target="r15b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re20" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r15" target="r15c"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re21" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r15" target="r15d"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re22" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r15" target="r15e"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re23" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r16" target="r17"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re24" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r18" target="r19"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="re25" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r20" target="r21"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re26" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r21" target="r21a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re27" value="nao" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r21" target="r22"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re28" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r22" target="r23"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re29" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r23" target="r24"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re30" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r24" target="r24a"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re31" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r24" target="r24b"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re32" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r24" target="r24c"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="re33" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r25" target="r26"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re34" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r26" target="r27"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re35" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r27" target="r28"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re36" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r28" target="r29"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re37" value="sim" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r29" target="r29a"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="re38" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r30" target="r31"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="re39" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="r31" target="r32"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="re40" value="(quem notifica: actuator_status_cb / actuator_discovery_cb - ver Pagina 3, actuator_manager_seen/name_seen)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="r25" target="r30" exitX="0" exitY="0.9" entryX="0" entryY="0.1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="410" y="740" /><mxPoint x="410" y="1200" /></Array></mxGeometry></mxCell>
+
+        <mxCell id="rse1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="rs1" target="rs2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="rse2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="rs2" target="rs3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="rse3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="rs3" target="rs4"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

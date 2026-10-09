@@ -1,0 +1,35 @@
+/*
+ * Overlay para nRF54LM20-DK (target ns/TF-M - ver nota abaixo)
+ * Habilita a uart30 como instancia dedicada ao link com o nRF9151.
+ *
+ * NAO redefine pinctrl: nrf54lm20dk_common.dtsi (arquivo nativo do
+ * board, mantido pela Nordic) ja entrega current-speed, pinctrl-0/1 e
+ * pinctrl-names prontos para uart30 - so falta o status="okay" abaixo.
+ *
+ * ACHADO EM BANCADA (2026-08-12): a primeira versao deste overlay
+ * (copiada de exercises/uart-link) redefinia os pinos do zero e ERRAVA
+ * - usava UART_RX em P0.08, mas o pinctrl nativo do board
+ * (nrf54lm20dk_nrf54lm20_a_b-pinctrl.dtsi) diz:
+ *
+ *   group1: UART_TX = P0.06,  UART_RTS = P0.08
+ *   group2: UART_RX = P0.07,  UART_CTS = P0.09
+ *
+ * P0.08 e' RTS neste board, nao RX - a redefinicao pisava em cima do
+ * default correto do board com um pino errado (e descartava RTS/CTS
+ * de quebra, ja que so declarava TX/RX). Sintoma visto na bancada:
+ * "UART_RX_STOPPED, reason=4" (UART_ERROR_FRAMING) no lado do 91 e
+ * ACK nunca recebido no lado do 54, de forma persistente.
+ *
+ * Fio fisico: TX do 54 = P0.06, RX do 54 = P0.07 (nao P0.08).
+ *
+ * NOME DO ARQUIVO IMPORTA: o nrf54-app builda para o target
+ * nrf54lm20dk/nrf54lm20b/cpuapp/ns (TF-M), nao .../cpuapp (secure) como
+ * exercises/uart-link. O Zephyr nomeia o overlay de board pelo target
+ * INTEIRO - copiar o overlay do exercicio com o nome dele (sem "_ns")
+ * faz o Zephyr simplesmente nao carregar este arquivo, sem erro de
+ * build, e a uart30 fica desabilitada em silencio.
+ */
+
+&uart30 {
+	status = "okay";
+};
